@@ -1,3 +1,4 @@
+//test 2014182012
 #include <GL/freeglut.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -221,7 +222,8 @@ GLvoid Reshape(int w, int h)
 	else {
 		// 2. 클리핑 공간 설정: 직각 투영인 경우
 		glOrtho(-400.0, 400.0, -300.0, 300.0, -400.0, 400.0);
-	}
+	}
+
 	// 모델 뷰 행렬 스택 재설정
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();

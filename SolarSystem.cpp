@@ -15,16 +15,6 @@
 #include "Uranus.h"
 #include "Neptune.h"
 
-/*Star_Sun Sun;
-Star_Mercury Mercury;
-Star_Venus Venus;
-Star_Earth Earth;
-Star_Mars Mars;
-Star_Jupiter Jupiter;
-Star_Saturn Saturn;
-Star_Uranus Uranus;
-Star_Neptune Neptune;
-*/
 struct Orbit {
 	double x, z;
 	double degree = 0;
@@ -300,17 +290,14 @@ GLvoid Reshape(int w, int h)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	if (projection) {
-		//-- 투영은 직각 투영 또는 원근 투영 중 한 개를 설정한다.
-		// 1. 클리핑 공간 설정: 원근 투영인 경우
-		gluPerspective(60.0f, w / h, 1.0, 10000.0);
-		glFrustum(SCREEN_WIDTH_MIN, SCREEN_WIDTH_MAX, SCREEN_HEIGHT_MIN, SCREEN_HEIGHT_MAX, SCREEN_DEPTH_MIN, SCREEN_DEPTH_MAX);
-		glTranslatef(0.0, 0.0, -1000.0); // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
-	}
-	else {
-		// 2. 클리핑 공간 설정: 직각 투영인 경우
-		glOrtho(-400.0, 400.0, -300.0, 300.0, -400.0, 400.0);
-	}
+	//-- 투영은 직각 투영 또는 원근 투영 중 한 개를 설정한다.
+	// 1. 클리핑 공간 설정: 원근 투영인 경우
+	gluPerspective(60.0f, (double)w / (double)h, 1.0, 10000.0);
+	glFrustum(SCREEN_WIDTH_MIN, SCREEN_WIDTH_MAX, SCREEN_HEIGHT_MIN, SCREEN_HEIGHT_MAX, SCREEN_DEPTH_MIN, SCREEN_DEPTH_MAX);
+	glTranslatef(0.0, 0.0, -2000.0); // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
+
+	// 2. 클리핑 공간 설정: 직각 투영인 경우
+	//glOrtho(-400.0, 400.0, -300.0, 300.0, -400.0, 400.0);
 
 	// 모델 뷰 행렬 스택 재설정
 	glMatrixMode(GL_MODELVIEW);

@@ -1,3 +1,4 @@
+#pragma once
 #include "BasicSetUp.h"
 #include "Sun.h"
 

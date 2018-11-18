@@ -15,7 +15,7 @@
 #include "Uranus.h"
 #include "Neptune.h"
 
-Star_Sun Sun;
+/*Star_Sun Sun;
 Star_Mercury Mercury;
 Star_Venus Venus;
 Star_Earth Earth;
@@ -24,7 +24,7 @@ Star_Jupiter Jupiter;
 Star_Saturn Saturn;
 Star_Uranus Uranus;
 Star_Neptune Neptune;
-
+*/
 struct Orbit {
 	double x, z;
 	double degree = 0;
@@ -81,7 +81,7 @@ GLvoid drawScene(GLvoid)
 	//태양
 	glPushMatrix();
 	glTranslated(Sun.xPos, Sun.yPos, Sun.zPos);
-	glColor3d(Sun.RGB[0], Sun.RGB[1], Sun.RGB[2]);
+	glColor3b(Sun.RGB[0], Sun.RGB[1], Sun.RGB[2]);
 	glutSolidSphere(Sun.Radius, 30, 30);
 	glutWireSphere(Sun.Radius, 30, 30);
 	glPopMatrix();
@@ -89,7 +89,7 @@ GLvoid drawScene(GLvoid)
 	//수성
 	glPushMatrix();
 	glTranslated(Mercury.xPos, Mercury.yPos, Mercury.zPos);
-	glColor3d(Mercury.RGB[0], Mercury.RGB[1], Mercury.RGB[2]);
+	glColor3b(Mercury.RGB[0], Mercury.RGB[1], Mercury.RGB[2]);
 	glutSolidSphere(Mercury.Radius, 30, 30);
 	glutWireSphere(Mercury.Radius, 30, 30);
 	glPopMatrix();
@@ -97,7 +97,7 @@ GLvoid drawScene(GLvoid)
 	//금성
 	glPushMatrix();
 	glTranslated(Venus.xPos, Venus.yPos, Venus.zPos);
-	glColor3d(Venus.RGB[0], Venus.RGB[1], Venus.RGB[2]);
+	glColor3b(Venus.RGB[0], Venus.RGB[1], Venus.RGB[2]);
 	glutSolidSphere(Venus.Radius, 30, 30);
 	glutWireSphere(Venus.Radius, 30, 30);
 	glPopMatrix();
@@ -105,7 +105,7 @@ GLvoid drawScene(GLvoid)
 	//지구
 	glPushMatrix();
 	glTranslated(Earth.xPos, Earth.yPos, Earth.zPos);
-	glColor3d(Earth.RGB[0], Earth.RGB[1], Earth.RGB[2]);
+	glColor3b(Earth.RGB[0], Earth.RGB[1], Earth.RGB[2]);
 	glutSolidSphere(Earth.Radius, 30, 30);
 	glutWireSphere(Earth.Radius, 30, 30);
 	glPopMatrix();
@@ -113,7 +113,7 @@ GLvoid drawScene(GLvoid)
 	//화성
 	glPushMatrix();
 	glTranslated(Mars.xPos, Mars.yPos, Mars.zPos);
-	glColor3d(Mars.RGB[0], Mars.RGB[1], Mars.RGB[2]);
+	glColor3b(Mars.RGB[0], Mars.RGB[1], Mars.RGB[2]);
 	glutSolidSphere(Mars.Radius, 30, 30);
 	glutWireSphere(Mars.Radius, 30, 30);
 	glPopMatrix();
@@ -121,7 +121,7 @@ GLvoid drawScene(GLvoid)
 	//목성
 	glPushMatrix();
 	glTranslated(Jupiter.xPos, Jupiter.yPos, Jupiter.zPos);
-	glColor3d(Jupiter.RGB[0], Jupiter.RGB[1], Jupiter.RGB[2]);
+	glColor3b(Jupiter.RGB[0], Jupiter.RGB[1], Jupiter.RGB[2]);
 	glutSolidSphere(Jupiter.Radius, 30, 30);
 	glutWireSphere(Jupiter.Radius, 30, 30);
 	glPopMatrix();
@@ -129,7 +129,7 @@ GLvoid drawScene(GLvoid)
 	//토성
 	glPushMatrix();
 	glTranslated(Saturn.xPos, Saturn.yPos, Saturn.zPos);
-	glColor3d(Saturn.RGB[0], Saturn.RGB[1], Saturn.RGB[2]);
+	glColor3b(Saturn.RGB[0], Saturn.RGB[1], Saturn.RGB[2]);
 	glutSolidSphere(Saturn.Radius, 30, 30);
 	glutWireSphere(Saturn.Radius, 30, 30);
 	glPopMatrix();
@@ -137,7 +137,7 @@ GLvoid drawScene(GLvoid)
 	//천왕성
 	glPushMatrix();
 	glTranslated(Uranus.xPos, Uranus.yPos, Uranus.zPos);
-	glColor3d(Uranus.RGB[0], Uranus.RGB[1], Uranus.RGB[2]);
+	glColor3b(Uranus.RGB[0], Uranus.RGB[1], Uranus.RGB[2]);
 	glutSolidSphere(Uranus.Radius, 30, 30);
 	glutWireSphere(Uranus.Radius, 30, 30);
 	glPopMatrix();
@@ -145,7 +145,7 @@ GLvoid drawScene(GLvoid)
 	//해왕성
 	glPushMatrix();
 	glTranslated(Neptune.xPos, Neptune.yPos, Neptune.zPos);
-	glColor3d(Neptune.RGB[0], Neptune.RGB[1], Neptune.RGB[2]);
+	glColor3b(Neptune.RGB[0], Neptune.RGB[1], Neptune.RGB[2]);
 	glutSolidSphere(Neptune.Radius, 30, 30);
 	glutWireSphere(Neptune.Radius, 30, 30);
 	glPopMatrix();

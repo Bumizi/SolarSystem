@@ -1,17 +1,30 @@
-//test 2014182012
 #include <GL/freeglut.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-#define WIDTH_MAX 400.0
-#define HEIGHT_MAX 300.0
-#define DEPTH_MAX 300.0
+#include "BasicSetUp.h"
+#include "CameraManipulationSetUp.h"
+#include "Sun.h"
+#include "Mercury.h"
+#include "Venus.h"
+#include "Earth.h"
+#include "Mars.h"
+#include "Jupiter.h"
+#include "Saturn.h"
+#include "Uranus.h"
+#include "Neptune.h"
 
-#define Pi 3.141518 / 180
+Star_Sun Sun;
+Star_Mercury Mercury;
+Star_Venus Venus;
+Star_Earth Earth;
+Star_Mars Mars;
+Star_Jupiter Jupiter;
+Star_Saturn Saturn;
+Star_Uranus Uranus;
+Star_Neptune Neptune;
 
-#define Window_x 1600
-#define Window_y 900
 struct Orbit {
 	double x, z;
 	double degree = 0;
@@ -35,14 +48,14 @@ void main(int argc, char *argv[])
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH); // 디스플레이 모드 설정
 	glutInitWindowPosition(100, 100); // 윈도우의 위치지정
-	glutInitWindowSize(Window_x, Window_y); // 윈도우의 크기 지정
+	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT); // 윈도우의 크기 지정
 	glutCreateWindow("TheSolarSystem"); // 윈도우 생성 (윈도우 이름)
 	glutDisplayFunc(drawScene); // 출력 함수의 지정
 	glutReshapeFunc(Reshape);
 	glutKeyboardFunc(Keyboard);
 	glutMouseFunc(Mouse);
 	glutPassiveMotionFunc(Motion);
-	glutTimerFunc(10, TimerFunction, 1);
+	glutTimerFunc(100, TimerFunction, 1);
 	glutMainLoop();
 }
 // 윈도우 출력 함수
@@ -55,20 +68,95 @@ GLvoid drawScene(GLvoid)
 
 	if(rotate)
 		glRotated(rt, rt_x, rt_y, rt_z);
-	gluLookAt(cx, cy + 10, cz + 50, 0.0 + cx, 0.0 + cy, 0.0 + cz, 0.0, 1.0, 0.0);
+	gluLookAt(cx, cy + 900, cz + 1600, 0.0 + cx, 0.0 + cy, 0.0 + cz, 0.0, 1.0, 0.0);
 
-	
+	/*
 	glColor3f(0.0, 0.0, 1.0);
 	if (model)
 		glutSolidSphere(60, 30, 30);
 	else 
 		glutWireSphere(60, 20, 20);
+	*/
 
+	//태양
+	glPushMatrix();
+	glTranslated(Sun.xPos, Sun.yPos, Sun.zPos);
+	glColor3d(Sun.RGB[0], Sun.RGB[1], Sun.RGB[2]);
+	glutSolidSphere(Sun.Radius, 30, 30);
+	glutWireSphere(Sun.Radius, 30, 30);
+	glPopMatrix();
+
+	//수성
+	glPushMatrix();
+	glTranslated(Mercury.xPos, Mercury.yPos, Mercury.zPos);
+	glColor3d(Mercury.RGB[0], Mercury.RGB[1], Mercury.RGB[2]);
+	glutSolidSphere(Mercury.Radius, 30, 30);
+	glutWireSphere(Mercury.Radius, 30, 30);
+	glPopMatrix();
+
+	//금성
+	glPushMatrix();
+	glTranslated(Venus.xPos, Venus.yPos, Venus.zPos);
+	glColor3d(Venus.RGB[0], Venus.RGB[1], Venus.RGB[2]);
+	glutSolidSphere(Venus.Radius, 30, 30);
+	glutWireSphere(Venus.Radius, 30, 30);
+	glPopMatrix();
+
+	//지구
+	glPushMatrix();
+	glTranslated(Earth.xPos, Earth.yPos, Earth.zPos);
+	glColor3d(Earth.RGB[0], Earth.RGB[1], Earth.RGB[2]);
+	glutSolidSphere(Earth.Radius, 30, 30);
+	glutWireSphere(Earth.Radius, 30, 30);
+	glPopMatrix();
+
+	//화성
+	glPushMatrix();
+	glTranslated(Mars.xPos, Mars.yPos, Mars.zPos);
+	glColor3d(Mars.RGB[0], Mars.RGB[1], Mars.RGB[2]);
+	glutSolidSphere(Mars.Radius, 30, 30);
+	glutWireSphere(Mars.Radius, 30, 30);
+	glPopMatrix();
+
+	//목성
+	glPushMatrix();
+	glTranslated(Jupiter.xPos, Jupiter.yPos, Jupiter.zPos);
+	glColor3d(Jupiter.RGB[0], Jupiter.RGB[1], Jupiter.RGB[2]);
+	glutSolidSphere(Jupiter.Radius, 30, 30);
+	glutWireSphere(Jupiter.Radius, 30, 30);
+	glPopMatrix();
+
+	//토성
+	glPushMatrix();
+	glTranslated(Saturn.xPos, Saturn.yPos, Saturn.zPos);
+	glColor3d(Saturn.RGB[0], Saturn.RGB[1], Saturn.RGB[2]);
+	glutSolidSphere(Saturn.Radius, 30, 30);
+	glutWireSphere(Saturn.Radius, 30, 30);
+	glPopMatrix();
+
+	//천왕성
+	glPushMatrix();
+	glTranslated(Uranus.xPos, Uranus.yPos, Uranus.zPos);
+	glColor3d(Uranus.RGB[0], Uranus.RGB[1], Uranus.RGB[2]);
+	glutSolidSphere(Uranus.Radius, 30, 30);
+	glutWireSphere(Uranus.Radius, 30, 30);
+	glPopMatrix();
+
+	//해왕성
+	glPushMatrix();
+	glTranslated(Neptune.xPos, Neptune.yPos, Neptune.zPos);
+	glColor3d(Neptune.RGB[0], Neptune.RGB[1], Neptune.RGB[2]);
+	glutSolidSphere(Neptune.Radius, 30, 30);
+	glutWireSphere(Neptune.Radius, 30, 30);
+	glPopMatrix();
+
+
+	/*
 	//궤도
 	glColor3f(1.0, 1.0, 1.0);
 	for (int i = 0; i <= 360; i++) {
-		Coor[0].x = big_radian * cos(Coor[0].degree* Pi);
-		Coor[0].z = big_radian * sin(Coor[0].degree* Pi);
+		Coor[0].x = big_radian * cos(Coor[0].degree* PI);
+		Coor[0].z = big_radian * sin(Coor[0].degree* PI);
 		if(Coor[0].degree < 360)
 			Coor[0].degree += 1;
 		else
@@ -77,8 +165,8 @@ GLvoid drawScene(GLvoid)
 			Coor[1].degree += 1;
 		else
 			Coor[1].degree = 0;
-		Coor[1].x = big_radian * cos(Coor[1].degree* Pi);
-		Coor[1].z = big_radian * sin(Coor[1].degree* Pi);
+		Coor[1].x = big_radian * cos(Coor[1].degree* PI);
+		Coor[1].z = big_radian * sin(Coor[1].degree* PI);
 		glBegin(GL_LINES);
 		glVertex3f(Coor[0].x, 0.0, Coor[0].z);
 		glVertex3f(Coor[1].x, 0.0, Coor[1].z);
@@ -101,8 +189,8 @@ GLvoid drawScene(GLvoid)
 		glPopMatrix();
 	}
 	for (int i = 0; i <= 360; i++) {
-		Coor[0].x = small_radian * cos(Coor[0].degree* Pi);
-		Coor[0].z = small_radian * sin(Coor[0].degree* Pi);
+		Coor[0].x = small_radian * cos(Coor[0].degree* PI);
+		Coor[0].z = small_radian * sin(Coor[0].degree* PI);
 		if (Coor[0].degree < 360)
 			Coor[0].degree += 1;
 		else
@@ -111,8 +199,8 @@ GLvoid drawScene(GLvoid)
 			Coor[1].degree += 1;
 		else
 			Coor[1].degree = 0;
-		Coor[1].x = small_radian * cos(Coor[1].degree* Pi);
-		Coor[1].z = small_radian * sin(Coor[1].degree* Pi);
+		Coor[1].x = small_radian * cos(Coor[1].degree* PI);
+		Coor[1].z = small_radian * sin(Coor[1].degree* PI);
 		glPushMatrix();
 		glTranslated(Circle[0].x, 0.0, Circle[0].z);
 		glBegin(GL_LINES);
@@ -199,7 +287,7 @@ GLvoid drawScene(GLvoid)
 		}
 		glPopMatrix();
 	}
-
+	*/
 	glutSwapBuffers();
 	//glFlush(); // 화면에 출력하기
 }
@@ -216,7 +304,7 @@ GLvoid Reshape(int w, int h)
 		//-- 투영은 직각 투영 또는 원근 투영 중 한 개를 설정한다.
 		// 1. 클리핑 공간 설정: 원근 투영인 경우
 		gluPerspective(60.0f, w / h, 1.0, 10000.0);
-		glFrustum(-WIDTH_MAX, WIDTH_MAX, -HEIGHT_MAX, HEIGHT_MAX, -DEPTH_MAX, DEPTH_MAX);
+		glFrustum(SCREEN_WIDTH_MIN, SCREEN_WIDTH_MAX, SCREEN_HEIGHT_MIN, SCREEN_HEIGHT_MAX, SCREEN_DEPTH_MIN, SCREEN_DEPTH_MAX);
 		glTranslatef(0.0, 0.0, -1000.0); // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
 	}
 	else {
@@ -348,10 +436,10 @@ void Keyboard(unsigned char key, int x, int y)
 			projection = true;
 		else
 			projection = false;
-		Reshape(Window_x, Window_y);
+		Reshape(WINDOW_WIDTH, WINDOW_HEIGHT);
 		break;
 	case 'Q': //종료
-		glutDestroyWindow(glutCreateWindow("1-18"));
+		glutDestroyWindow(glutCreateWindow("TheSolarSystem"));
 		exit(0);
 	}
 	glutPostRedisplay();
@@ -394,8 +482,8 @@ void TimerFunction(int value) {
 				Circle[i].degree += 2;
 			else
 				Circle[i].degree += 3;
-			Circle[i].x = big_radian * cos(Circle[i].degree* Pi);
-			Circle[i].z = big_radian * sin(Circle[i].degree* Pi);
+			Circle[i].x = big_radian * cos(Circle[i].degree* PI);
+			Circle[i].z = big_radian * sin(Circle[i].degree* PI);
 		}
 		else
 			Circle[i].degree = 0;
@@ -404,8 +492,8 @@ void TimerFunction(int value) {
 	for (int i = 0; i < 3; i++) {
 		if (Moon[i].degree < 360) {
 			Moon[i].degree++;
-			Moon[i].x = small_radian * cos(Circle[i].degree* Pi);
-			Moon[i].z = small_radian * sin(Circle[i].degree* Pi);
+			Moon[i].x = small_radian * cos(Circle[i].degree* PI);
+			Moon[i].z = small_radian * sin(Circle[i].degree* PI);
 		}
 		else
 			Moon[i].degree = 0;

@@ -14,6 +14,7 @@
 #include "Saturn.h"
 #include "Uranus.h"
 #include "Neptune.h"
+#include "Camera.h"
 
 struct Orbit {
 	double x, z;
@@ -35,6 +36,7 @@ bool projection = true, model = true;
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 void Mouse(int button, int state, int x, int y);
+void MouseWheel(int button, int dir, int x, int y);
 void Keyboard(unsigned char key, int x, int y);
 void Motion(int x, int y);
 void StarRotationTimerFunction(int value);
@@ -52,6 +54,7 @@ void main(int argc, char *argv[])
 	glutReshapeFunc(Reshape);
 	glutKeyboardFunc(Keyboard);
 	glutMouseFunc(Mouse);
+	glutMouseWheelFunc(MouseWheel);
 	glutPassiveMotionFunc(Motion);
 	glutTimerFunc(100, TimerFunction, 1);
 	glutTimerFunc(10, StarRotationTimerFunction, 1);
@@ -62,12 +65,23 @@ GLvoid drawScene(GLvoid)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
-	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	if(rotate)
-		glRotated(rt, rt_x, rt_y, rt_z);
-	gluLookAt(cx, cy + 10, cz + 10, 0.0 + cx, 0.0 + cy, 0.0 + cz, 0.0, 1.0, 0.0);
+	glMatrixMode(GL_PROJECTION);
+	if (rotate)//카메라 회전 변환
+	{
+		glRotated(Camera.rtx, 1, 0, 0);
+		glRotated(Camera.rty, 0, 1, 0);
+		glRotated(Camera.rtz, 0, 0, 1);
+	}
+	//카메라 이동 변환
+	glTranslated(Camera.mvx, Camera.mvy, Camera.mvz);
+	Camera.invalidate_values();
+	//카메라 EYE, AY, UP 벡터로 시점 설정
+	glMatrixMode(GL_MODELVIEW);
+	gluLookAt(Camera.EYEx, Camera.EYEy, Camera.EYEz,
+		Camera.ATx, Camera.ATy, Camera.ATz,
+		Camera.UPx, Camera.UPy, Camera.UPz);
 
 	/*
 	glColor3f(0.0, 0.0, 1.0);
@@ -351,6 +365,14 @@ void Mouse(int button, int state, int x, int y) {
 	}
 	glutPostRedisplay();
 }
+void MouseWheel(int button, int dir, int x, int y) {
+	if (dir > 0) {
+		Camera.move_front(CAMERA_MOVE);
+	}
+	else {
+		Camera.move_back(CAMERA_MOVE);
+	}
+}
 void Motion(int x, int y) {
 	
 }
@@ -427,16 +449,22 @@ void Keyboard(unsigned char key, int x, int y)
 			rotate = false;
 		break;
 	case 'w':
-		cy += 5;
+		Camera.move_up(CAMERA_MOVE);
 		break;
 	case 'a':
-		cx -= 5;
+		Camera.move_left(CAMERA_MOVE);
 		break;
 	case 's':
-		cy -= 5;
+		Camera.move_down(CAMERA_MOVE);
 		break;
 	case 'd':
-		cx += 5;
+		Camera.move_right(CAMERA_MOVE);
+		break;
+	case 't':case'T':
+		Camera.set_pos(0, 900, 0);
+		break;
+	case 'f':case'F':
+		Camera.set_pos(0, 0, 1600);
 		break;
 	case '+':
 		Speed *= 10;

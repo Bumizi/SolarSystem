@@ -40,7 +40,7 @@ double loop_x, loop_z;
 //bool 트리거
 bool rotate = false, c_rotate = true, reverse = false;
 bool projection = true, model = true;
-bool drag = false;
+bool drag = false, wheel_drag = false;
 
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
@@ -80,15 +80,14 @@ GLvoid drawScene(GLvoid)
 	glLoadIdentity();
 
 	glMatrixMode(GL_PROJECTION);
-	if (rotate)//카메라 회전 변환
-	{
-		glRotated(Camera.rtx, 1, 0, 0);
-		glRotated(Camera.rty, 0, 1, 0);
-		glRotated(Camera.rtz, 0, 0, 1);
-	}
+	MouseTranslated();
+	glTranslated(0, 0, 2000.0);
+	glRotated(Camera.rtx, 1, 0, 0);
+	glRotated(Camera.rty, 0, 1, 0);
+	glRotated(Camera.rtz, 0, 0, 1);
+	glTranslated(0, 0, -2000.0);
 	//카메라 이동 변환
 	glTranslated(Camera.mvx, Camera.mvy, Camera.mvz);
-	MouseTranslated();
 	
 	Camera.invalidate_values();
 	//카메라 EYE, AY, UP 벡터로 시점 설정
@@ -304,19 +303,19 @@ GLvoid Reshape(int w, int h)
 void Mouse(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
 		drag = true;
-		printf("drag : %d\n", drag);
 		ox = x; oy = y;
 		mx = x; my = y;
 	}
 	else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
 		drag = false;
-		printf("drag : %d\n", drag);
 	}
-	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
-		
+	else if (button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN) {
+		wheel_drag = true;
+		ox = x; oy = y;
+		mx = x; my = y;
 	}
-	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP) {
-
+	else if (button == GLUT_MIDDLE_BUTTON && state == GLUT_UP) {
+		wheel_drag = false;
 	}
 	glutPostRedisplay();
 }
@@ -329,9 +328,12 @@ void MouseWheel(int button, int dir, int x, int y) {
 	}
 }
 void Motion(int x, int y) {
-	printf("drag : %d\n", drag);
 	if (drag) {
-		printf("%d, %d\n", x, y);
+		//printf("%d, %d\n", x, y);
+		mx = x; my = y;
+	}
+	else if (wheel_drag) {
+		//printf("%d, %d\n", x, y);
 		mx = x; my = y;
 	}
 }
@@ -517,7 +519,18 @@ void MouseTranslated(void)
 	if (ox == mx && oy == my)
 		return;
 	int dx = mx - ox; int dy = my - oy;
-	glTranslated(dx, -dy, 0);
+
+	if (wheel_drag) {
+		Camera.EYEx += dx;
+		Camera.EYEy -= dy;
+		Camera.ATx += dx;
+		Camera.ATy -= dy;
+	}
+	else if (drag) {
+		Camera.rty -= dx / 3.0;
+		Camera.rtx -= dy / 3.0;
+	}
+
 	ox = mx, oy = my;
 }
 void StarRotationTimerFunction(int value) {

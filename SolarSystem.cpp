@@ -20,8 +20,15 @@ struct Orbit {
 	double degree = 0;
 };
 Orbit Coor[2], Circle[3], Moon[3];
+
+//카메라 조작 관련 변수
 int rt_x = 0, rt_y = 0, rt_z = 0, rt = 0, l_rt = 0, r_rt = 0, c_rt = 0;
 double cx = 0, cy = 0, cz = 0, big_radian = 200, small_radian = 70, circle_x, circle_z;
+
+//행성 변수
+double Speed = 100;
+
+//bool 트리거
 bool rotate = false, c_rotate = true, reverse = false;
 bool projection = true, model = true;
 
@@ -30,6 +37,7 @@ GLvoid Reshape(int w, int h);
 void Mouse(int button, int state, int x, int y);
 void Keyboard(unsigned char key, int x, int y);
 void Motion(int x, int y);
+void StarRotationTimerFunction(int value);
 void TimerFunction(int value);
 
 void main(int argc, char *argv[])
@@ -46,6 +54,7 @@ void main(int argc, char *argv[])
 	glutMouseFunc(Mouse);
 	glutPassiveMotionFunc(Motion);
 	glutTimerFunc(100, TimerFunction, 1);
+	glutTimerFunc(10, StarRotationTimerFunction, 1);
 	glutMainLoop();
 }
 // 윈도우 출력 함수
@@ -58,7 +67,7 @@ GLvoid drawScene(GLvoid)
 
 	if(rotate)
 		glRotated(rt, rt_x, rt_y, rt_z);
-	gluLookAt(cx, cy + 900, cz + 1600, 0.0 + cx, 0.0 + cy, 0.0 + cz, 0.0, 1.0, 0.0);
+	gluLookAt(cx, cy + 10, cz + 10, 0.0 + cx, 0.0 + cy, 0.0 + cz, 0.0, 1.0, 0.0);
 
 	/*
 	glColor3f(0.0, 0.0, 1.0);
@@ -71,72 +80,98 @@ GLvoid drawScene(GLvoid)
 	//태양
 	glPushMatrix();
 	glTranslated(Sun.xPos, Sun.yPos, Sun.zPos);
+	glRotated(Sun.Rotation, 0, 1, 0);
 	glColor3b(Sun.RGB[0], Sun.RGB[1], Sun.RGB[2]);
 	glutSolidSphere(Sun.Radius, 30, 30);
-	glutWireSphere(Sun.Radius, 30, 30);
+	glColor3f(1, 1, 1);
+	glutWireSphere(Sun.Radius+10, 15, 15);
 	glPopMatrix();
 
 	//수성
 	glPushMatrix();
+	glRotated(Mercury.Revolution, 0, 1, 0);
 	glTranslated(Mercury.xPos, Mercury.yPos, Mercury.zPos);
+	glRotated(Mercury.Rotation, 0, 1, 0);
 	glColor3b(Mercury.RGB[0], Mercury.RGB[1], Mercury.RGB[2]);
 	glutSolidSphere(Mercury.Radius, 30, 30);
-	glutWireSphere(Mercury.Radius, 30, 30);
+	glColor3f(1, 1, 1);
+	glutWireSphere(Mercury.Radius + 10, 15, 15);
 	glPopMatrix();
 
 	//금성
 	glPushMatrix();
+	glRotated(Venus.Revolution, 0, 1, 0);
 	glTranslated(Venus.xPos, Venus.yPos, Venus.zPos);
+	glRotated(Venus.Rotation, 0, 1, 0);
 	glColor3b(Venus.RGB[0], Venus.RGB[1], Venus.RGB[2]);
 	glutSolidSphere(Venus.Radius, 30, 30);
-	glutWireSphere(Venus.Radius, 30, 30);
+	glColor3f(1, 1, 1);
+	glutWireSphere(Venus.Radius + 10, 15, 15);
 	glPopMatrix();
 
 	//지구
 	glPushMatrix();
+	glRotated(Earth.Revolution, 0, 1, 0);
 	glTranslated(Earth.xPos, Earth.yPos, Earth.zPos);
+	glRotated(Earth.Rotation, 0, 1, 0);
 	glColor3b(Earth.RGB[0], Earth.RGB[1], Earth.RGB[2]);
 	glutSolidSphere(Earth.Radius, 30, 30);
-	glutWireSphere(Earth.Radius, 30, 30);
+	glColor3f(1, 1, 1);
+	glutWireSphere(Earth.Radius + 10, 15, 15);
 	glPopMatrix();
 
 	//화성
 	glPushMatrix();
+	glRotated(Mars.Revolution, 0, 1, 0);
 	glTranslated(Mars.xPos, Mars.yPos, Mars.zPos);
+	glRotated(Mars.Rotation, 0, 1, 0);
 	glColor3b(Mars.RGB[0], Mars.RGB[1], Mars.RGB[2]);
 	glutSolidSphere(Mars.Radius, 30, 30);
-	glutWireSphere(Mars.Radius, 30, 30);
+	glColor3f(1, 1, 1);
+	glutWireSphere(Mars.Radius + 10, 15, 15);
 	glPopMatrix();
 
 	//목성
 	glPushMatrix();
+	glRotated(Jupiter.Revolution, 0, 1, 0);
 	glTranslated(Jupiter.xPos, Jupiter.yPos, Jupiter.zPos);
+	glRotated(Jupiter.Rotation, 0, 1, 0);
 	glColor3b(Jupiter.RGB[0], Jupiter.RGB[1], Jupiter.RGB[2]);
 	glutSolidSphere(Jupiter.Radius, 30, 30);
-	glutWireSphere(Jupiter.Radius, 30, 30);
+	glColor3f(1, 1, 1);
+	glutWireSphere(Jupiter.Radius + 10, 15, 15);
 	glPopMatrix();
 
 	//토성
 	glPushMatrix();
+	glRotated(Saturn.Revolution, 0, 1, 0);
 	glTranslated(Saturn.xPos, Saturn.yPos, Saturn.zPos);
+	glRotated(Saturn.Rotation, 0, 1, 0);
 	glColor3b(Saturn.RGB[0], Saturn.RGB[1], Saturn.RGB[2]);
 	glutSolidSphere(Saturn.Radius, 30, 30);
+	glColor3f(1, 1, 1);
 	glutWireSphere(Saturn.Radius, 30, 30);
 	glPopMatrix();
 
 	//천왕성
 	glPushMatrix();
+	glRotated(Uranus.Revolution, 0, 1, 0);
 	glTranslated(Uranus.xPos, Uranus.yPos, Uranus.zPos);
+	glRotated(Uranus.Rotation, 0, 1, 0);
 	glColor3b(Uranus.RGB[0], Uranus.RGB[1], Uranus.RGB[2]);
 	glutSolidSphere(Uranus.Radius, 30, 30);
+	glColor3f(1, 1, 1);
 	glutWireSphere(Uranus.Radius, 30, 30);
 	glPopMatrix();
 
 	//해왕성
 	glPushMatrix();
+	glRotated(Neptune.Revolution, 0, 1, 0);
 	glTranslated(Neptune.xPos, Neptune.yPos, Neptune.zPos);
+	glRotated(Neptune.Rotation, 0, 1, 0);
 	glColor3b(Neptune.RGB[0], Neptune.RGB[1], Neptune.RGB[2]);
 	glutSolidSphere(Neptune.Radius, 30, 30);
+	glColor3f(1, 1, 1);
 	glutWireSphere(Neptune.Radius, 30, 30);
 	glPopMatrix();
 
@@ -404,10 +439,10 @@ void Keyboard(unsigned char key, int x, int y)
 		cx += 5;
 		break;
 	case '+':
-		cz -= 10;
+		Speed *= 10;
 		break;
 	case '-':
-		cz += 10;
+		Speed /= 10;
 		break;
 	case 'i':
 		cx = 0, cy = 50, cz = 50;
@@ -487,4 +522,90 @@ void TimerFunction(int value) {
 	}
 	glutPostRedisplay(); // 화면 재 출력
 	glutTimerFunc(10, TimerFunction, 1); // 타이머함수 재 설정
+}
+void StarRotationTimerFunction(int value) {
+	if (Sun.Rotation < 360)
+		Sun.Rotation += STAR_ROTATION_HOUR_PER_mSECOND / Sun.Rotation_Cycle * Speed;
+	else
+		Sun.Rotation = 0;
+	//
+	if (Mercury.Rotation < 360)
+		Mercury.Rotation += STAR_ROTATION_HOUR_PER_mSECOND/ Mercury.Roation_Cycle * Speed;
+	else
+		Mercury.Rotation = 0;
+	if (Mercury.Revolution < 360)
+		Mercury.Revolution += STAR_ROTATION_HOUR_PER_mSECOND / Mercury.Revolution_Cycle * Speed;
+	else
+		Mercury.Revolution = 0;
+	//
+	if (Venus.Rotation < 360)
+		Venus.Rotation += STAR_ROTATION_HOUR_PER_mSECOND / Venus.Roation_Cycle * Speed;
+	else
+		Venus.Rotation = 0;
+	if (Venus.Revolution < 360)
+		Venus.Revolution += STAR_ROTATION_HOUR_PER_mSECOND / Venus.Revolution_Cycle * Speed;
+	else
+		Venus.Revolution = 0;
+	//
+	if (Earth.Rotation < 360)
+		Earth.Rotation += STAR_ROTATION_HOUR_PER_mSECOND / Earth.Roation_Cycle * Speed;
+	else
+		Earth.Rotation = 0;
+	if (Earth.Revolution < 360)
+		Earth.Revolution += STAR_ROTATION_HOUR_PER_mSECOND / Earth.Revolution_Cycle * Speed;
+	else
+		Earth.Revolution = 0;
+	//
+	if (Mars.Rotation < 360)
+		Mars.Rotation += STAR_ROTATION_HOUR_PER_mSECOND / Mars.Roation_Cycle * Speed;
+	else
+		Mars.Rotation = 0;
+	if (Mars.Revolution < 360)
+		Mars.Revolution += STAR_ROTATION_HOUR_PER_mSECOND / Mars.Revolution_Cycle * Speed;
+	else
+		Mars.Revolution = 0;
+	//
+	if (Jupiter.Rotation < 360)
+		Jupiter.Rotation += STAR_ROTATION_HOUR_PER_mSECOND / Jupiter.Roation_Cycle * Speed;
+	else
+		Jupiter.Rotation = 0;
+	if (Jupiter.Revolution < 360)
+		Jupiter.Revolution += STAR_ROTATION_HOUR_PER_mSECOND / Jupiter.Revolution_Cycle * Speed;
+	else
+		Jupiter.Revolution = 0;
+	//
+	if (Saturn.Rotation < 360)
+		Saturn.Rotation += STAR_ROTATION_HOUR_PER_mSECOND / Saturn.Roation_Cycle * Speed;
+	else
+		Saturn.Rotation = 0;
+	if (Saturn.Revolution < 360)
+		Saturn.Revolution += STAR_ROTATION_HOUR_PER_mSECOND / Saturn.Revolution_Cycle * Speed;
+	else
+		Saturn.Revolution = 0;
+	//
+	if (Uranus.Rotation < 360)
+		Uranus.Rotation += STAR_ROTATION_HOUR_PER_mSECOND / Uranus.Roation_Cycle * Speed;
+	else
+		Uranus.Rotation = 0;
+	if (Uranus.Revolution < 360)
+		Uranus.Revolution += STAR_ROTATION_HOUR_PER_mSECOND / Uranus.Revolution_Cycle * Speed;
+	else
+		Uranus.Revolution = 0;
+	//
+	if (Neptune.Rotation < 360)
+		Neptune.Rotation += STAR_ROTATION_HOUR_PER_mSECOND / Neptune.Roation_Cycle * Speed;
+	else
+		Neptune.Rotation = 0;
+	if (Neptune.Revolution < 360)
+		Neptune.Revolution += STAR_ROTATION_HOUR_PER_mSECOND / Neptune.Revolution_Cycle * Speed;
+	else
+		Neptune.Revolution = 0;
+	//
+	if (rt > -360)
+		rt--;
+	else
+		rt = 0;
+
+	glutPostRedisplay(); // 화면 재 출력
+	glutTimerFunc(10, StarRotationTimerFunction, 1); // 타이머함수 재 설정
 }

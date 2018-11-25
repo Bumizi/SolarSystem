@@ -28,6 +28,7 @@ double cx = 0, cy = 0, cz = 0, big_radian = 200, small_radian = 70, circle_x, ci
 
 //행성 변수
 double Speed = 100;
+double loop_x, loop_z;
 
 //bool 트리거
 bool rotate = false, c_rotate = true, reverse = false;

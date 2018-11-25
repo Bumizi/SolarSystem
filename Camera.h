@@ -65,7 +65,7 @@ void Camera::invalidate_values(void) {
 //카메라 위치 변경 시 쓰임
 void Camera::set_pos(double x, double y, double z) {
 	EYEx = x, EYEy = y, EYEz = z;
-	mvx = 0, mvy = 0, mvz = 0;
+	
 	printf("EYE값 변경 : %lf, %lf, %lf\n", EYEx, EYEy, EYEz);
 	switch (view_type())
 	{
@@ -77,3 +77,4 @@ void Camera::set_pos(double x, double y, double z) {
 		break;
 	}
 }
+

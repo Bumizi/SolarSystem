@@ -26,6 +26,9 @@ Orbit Coor[2], Circle[3], Moon[3];
 int rt_x = 0, rt_y = 0, rt_z = 0, rt = 0, l_rt = 0, r_rt = 0, c_rt = 0;
 double cx = 0, cy = 0, cz = 0, big_radian = 200, small_radian = 70, circle_x, circle_z;
 
+//윈도우 관련 변수
+int ww = 1600, wh = 900;
+
 //마우스 관련 변수
 double ox, oy; //클릭한 좌표
 double mx, my; //마우스 움직인 좌표
@@ -86,6 +89,7 @@ GLvoid drawScene(GLvoid)
 	//카메라 이동 변환
 	glTranslated(Camera.mvx, Camera.mvy, Camera.mvz);
 	MouseTranslated();
+	
 	Camera.invalidate_values();
 	//카메라 EYE, AY, UP 벡터로 시점 설정
 	glMatrixMode(GL_MODELVIEW);
@@ -270,6 +274,10 @@ GLvoid drawScene(GLvoid)
 }
 GLvoid Reshape(int w, int h)
 {
+	//화면을 초기화 하기 위해서는 밖에서 reshape를 불러야함.
+	//밖에서도 reshape를 부르기 위해 전역변수 w, h 초기화
+	ww = w, wh = h;
+
 	//뷰포트 변환 설정
 	glViewport(0, 0, w, h);
 
@@ -411,11 +419,13 @@ void Keyboard(unsigned char key, int x, int y)
 	case 'd':
 		Camera.move_right(CAMERA_MOVE);
 		break;
-	case 't':case'T':
+	case 't':case 'T':
 		Camera.set_pos(0, 900, 0);
+		Reshape(ww, wh);
 		break;
-	case 'f':case'F':
+	case 'f':case 'F':
 		Camera.set_pos(0, 0, 1600);
+		Reshape(ww, wh);
 		break;
 	case '+':
 		Speed *= 10;

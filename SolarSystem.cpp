@@ -26,6 +26,10 @@ Orbit Coor[2], Circle[3], Moon[3];
 int rt_x = 0, rt_y = 0, rt_z = 0, rt = 0, l_rt = 0, r_rt = 0, c_rt = 0;
 double cx = 0, cy = 0, cz = 0, big_radian = 200, small_radian = 70, circle_x, circle_z;
 
+//마우스 관련 변수
+double ox, oy; //클릭한 좌표
+double mx, my; //마우스 움직인 좌표
+
 //행성 변수
 double Speed = 100;
 double loop_x, loop_z;
@@ -33,6 +37,7 @@ double loop_x, loop_z;
 //bool 트리거
 bool rotate = false, c_rotate = true, reverse = false;
 bool projection = true, model = true;
+bool drag = false;
 
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
@@ -42,6 +47,9 @@ void Keyboard(unsigned char key, int x, int y);
 void Motion(int x, int y);
 void StarRotationTimerFunction(int value);
 void TimerFunction(int value);
+
+//마우스 움직임에 대한 translate 처리 함수
+void MouseTranslated(void);
 
 void main(int argc, char *argv[])
 {
@@ -56,7 +64,7 @@ void main(int argc, char *argv[])
 	glutKeyboardFunc(Keyboard);
 	glutMouseFunc(Mouse);
 	glutMouseWheelFunc(MouseWheel);
-	glutPassiveMotionFunc(Motion);
+	glutMotionFunc(Motion);
 	glutTimerFunc(100, TimerFunction, 1);
 	glutTimerFunc(10, StarRotationTimerFunction, 1);
 	glutMainLoop();
@@ -77,6 +85,7 @@ GLvoid drawScene(GLvoid)
 	}
 	//카메라 이동 변환
 	glTranslated(Camera.mvx, Camera.mvy, Camera.mvz);
+	MouseTranslated();
 	Camera.invalidate_values();
 	//카메라 EYE, AY, UP 벡터로 시점 설정
 	glMatrixMode(GL_MODELVIEW);
@@ -286,11 +295,20 @@ GLvoid Reshape(int w, int h)
 
 void Mouse(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-		
+		drag = true;
+		printf("drag : %d\n", drag);
+		ox = x; oy = y;
+		mx = x; my = y;
 	}
-
+	else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+		drag = false;
+		printf("drag : %d\n", drag);
+	}
 	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
 		
+	}
+	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP) {
+
 	}
 	glutPostRedisplay();
 }
@@ -303,7 +321,11 @@ void MouseWheel(int button, int dir, int x, int y) {
 	}
 }
 void Motion(int x, int y) {
-	
+	printf("drag : %d\n", drag);
+	if (drag) {
+		printf("%d, %d\n", x, y);
+		mx = x; my = y;
+	}
 }
 void Keyboard(unsigned char key, int x, int y)
 {
@@ -479,6 +501,14 @@ void TimerFunction(int value) {
 	}
 	glutPostRedisplay(); // 화면 재 출력
 	glutTimerFunc(10, TimerFunction, 1); // 타이머함수 재 설정
+}
+void MouseTranslated(void)
+{
+	if (ox == mx && oy == my)
+		return;
+	int dx = mx - ox; int dy = my - oy;
+	glTranslated(dx, -dy, 0);
+	ox = mx, oy = my;
 }
 void StarRotationTimerFunction(int value) {
 	if (Sun.Rotation < 360)

@@ -50,6 +50,8 @@ void Keyboard(unsigned char key, int x, int y);
 void Motion(int x, int y);
 void StarRotationTimerFunction(int value);
 void TimerFunction(int value);
+void mul(double m1, double m2, double m3);
+double get_dist(double sx, double sy, double sz, double dx, double dy, double dz);
 
 //마우스 움직임에 대한 translate 처리 함수
 void MouseTranslated(void);
@@ -81,11 +83,10 @@ GLvoid drawScene(GLvoid)
 
 	glMatrixMode(GL_PROJECTION);
 	MouseTranslated();
-	glTranslated(0, 0, 2000.0);
-	glRotated(Camera.rtx, 1, 0, 0);
-	glRotated(Camera.rty, 0, 1, 0);
-	glRotated(Camera.rtz, 0, 0, 1);
-	glTranslated(0, 0, -2000.0);
+	mul(Camera.rtx, Camera.rty, Camera.rtz);//카메라 회전 변환
+	//glRotated(Camera.rtx, 1, 0, 0);
+	//glRotated(Camera.rty, 0, 1, 0);
+	//glRotated(Camera.rtz, 0, 0, 1);
 	//카메라 이동 변환
 	glTranslated(Camera.mvx, Camera.mvy, Camera.mvz);
 	
@@ -320,11 +321,17 @@ void Mouse(int button, int state, int x, int y) {
 	glutPostRedisplay();
 }
 void MouseWheel(int button, int dir, int x, int y) {
+	double dist = get_dist(400, 400, 0, x, y, 0);
+	int dx = 800 - x; int dy = y - 450;
 	if (dir > 0) {
-		Camera.move_front(CAMERA_MOVE);
+		Camera.move_front(CAMERA_MOVE * 3);
+		if (dist != 0) {
+			if(dx != 0)Camera.move_right(dx * CAMERA_MOVE * 3 / dist);
+			if(dy != 0)Camera.move_up(dy * CAMERA_MOVE * 3 / dist);
+		}
 	}
 	else {
-		Camera.move_back(CAMERA_MOVE);
+		Camera.move_back(CAMERA_MOVE * 3);
 	}
 }
 void Motion(int x, int y) {
@@ -516,6 +523,7 @@ void TimerFunction(int value) {
 }
 void MouseTranslated(void)
 {
+	static double tx, ty;
 	if (ox == mx && oy == my)
 		return;
 	int dx = mx - ox; int dy = my - oy;
@@ -527,8 +535,11 @@ void MouseTranslated(void)
 		Camera.ATy -= dy;
 	}
 	else if (drag) {
-		Camera.rty -= dx / 3.0;
-		Camera.rtx -= dy / 3.0;
+		Camera.rty -= dx / 10.0;
+		Camera.rtx -= dy / 10.0;
+		//printf("%lf, %lf, %lf\n", Camera.rtx, Camera.rty, Camera.rtz);
+		tx += Camera.rtx, ty += Camera.rty;
+		printf("총 회전량 합산 : %lf, %lf\n", tx, ty);
 	}
 
 	ox = mx, oy = my;
@@ -618,4 +629,69 @@ void StarRotationTimerFunction(int value) {
 
 	glutPostRedisplay(); // 화면 재 출력
 	glutTimerFunc(10, StarRotationTimerFunction, 1); // 타이머함수 재 설정
+}
+
+void mul(double x, double y, double z)
+{
+	glTranslated(0, 0, 2000.0);
+	double rrx = x * PI / 180, rry = y * PI / 180, rrz = z * PI / 180;
+
+	GLdouble m1[16] = {
+		1, 0, 0, 0,
+		0, cos(rrx), sin(rrx), 0,
+		0, -sin(rrx), cos(rrx), 0,
+		0, 0, 0, 1
+	};
+	GLdouble m2[16] = {
+		cos(rry), 0, -sin(rry), 0,
+		0, 1, 0, 0,
+		sin(rry), 0, cos(rry), 0,
+		0, 0, 0, 1
+	};
+	GLdouble m3[16] = {
+		cos(rrz), sin(rrz), 0, 0,
+		-sin(rrz), cos(rrz), 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1
+	};
+	GLdouble tmp[16] = {
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0
+	};
+	GLdouble total[16] = {
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0
+	};
+
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			for (int k = 0; k < 4; k++)
+			{
+				tmp[i * 4 + j] += m1[i * 4 + k] * m2[k * 4 + j];
+			}
+		}
+	}
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			for (int k = 0; k < 4; k++)
+			{
+				total[i * 4 + j] += m3[i * 4 + k] * tmp[k * 4 + j];
+			}
+		}
+	}
+
+	glMultMatrixd(total);
+	glTranslated(0, 0, -2000.0);
+}
+double get_dist(double sx, double sy, double sz, double dx, double dy, double dz)
+{
+	return sqrt((sx - dx)*(sx - dx) + (sy - dy)*(sy - dy) + (sz - dz)*(sz - dz));
 }

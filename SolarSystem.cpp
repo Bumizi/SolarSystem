@@ -52,6 +52,10 @@ void StarRotationTimerFunction(int value);
 void TimerFunction(int value);
 void mul(double m1, double m2, double m3);
 double get_dist(double sx, double sy, double sz, double dx, double dy, double dz);
+double abs(double x)
+{
+	return (x > 0) ? x : -x;
+}
 
 //마우스 움직임에 대한 translate 처리 함수
 void MouseTranslated(void);
@@ -83,6 +87,7 @@ GLvoid drawScene(GLvoid)
 
 	glMatrixMode(GL_PROJECTION);
 	MouseTranslated();
+	Reshape(ww, wh);
 	mul(Camera.rtx, Camera.rty, Camera.rtz);//카메라 회전 변환
 	//glRotated(Camera.rtx, 1, 0, 0);
 	//glRotated(Camera.rty, 0, 1, 0);
@@ -90,7 +95,7 @@ GLvoid drawScene(GLvoid)
 	//카메라 이동 변환
 	glTranslated(Camera.mvx, Camera.mvy, Camera.mvz);
 	
-	Camera.invalidate_values();
+	//Camera.invalidate_values();
 	//카메라 EYE, AY, UP 벡터로 시점 설정
 	glMatrixMode(GL_MODELVIEW);
 	gluLookAt(Camera.EYEx, Camera.EYEy, Camera.EYEz,
@@ -429,10 +434,12 @@ void Keyboard(unsigned char key, int x, int y)
 		Camera.move_right(CAMERA_MOVE);
 		break;
 	case 't':case 'T':
+		Camera.invalidate_values();
 		Camera.set_pos(0, 900, 0);
 		Reshape(ww, wh);
 		break;
 	case 'f':case 'F':
+		Camera.invalidate_values();
 		Camera.set_pos(0, 0, 1600);
 		Reshape(ww, wh);
 		break;
@@ -537,9 +544,10 @@ void MouseTranslated(void)
 	else if (drag) {
 		Camera.rty -= dx / 10.0;
 		Camera.rtx -= dy / 10.0;
-		//printf("%lf, %lf, %lf\n", Camera.rtx, Camera.rty, Camera.rtz);
 		tx += Camera.rtx, ty += Camera.rty;
 		printf("총 회전량 합산 : %lf, %lf\n", tx, ty);
+		//printf("카메라가 보는 보는 곳 : %lf, %lf, %lf\n",
+		//	Camera.ATx, Camera.ATy, Camera.ATz);
 	}
 
 	ox = mx, oy = my;

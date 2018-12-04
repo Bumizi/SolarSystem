@@ -17,7 +17,9 @@ struct Camera {
 	void move_front(double value);
 	void move_back(double value);
 	void invalidate_values(void);
-	void rotate(double x, double y, double z);
+	void rotatex(double value);
+	void rotatey(double value);
+	void rotatez(double value);
 }Camera;
 
 //현재 카메라 뷰의 종류를 알아냄
@@ -51,11 +53,29 @@ void Camera::move_back(double value) {
 	mvz -= value;
 }
 
-//누른 후에 회전을 멈추게 해주는 함수
-//이 함수가 없다면 한 번 눌렀을 때 계속 수행될 것임.
+//초기화
 void Camera::invalidate_values(void) {
 	mvx = 0, mvy = 0, mvz = 0;
 	rtx = 0, rty = 0, rtz = 0;
+}
+
+void Camera::rotatex(double value)
+{
+	rtx += value;
+	if (rtx > 360) rtx -= 360;
+	if (rtx < 0) rtx += 360;
+}
+void Camera::rotatey(double value)
+{
+	rty += value;
+	if (rty > 360) rty -= 360;
+	if (rty < 0) rty += 360;
+}
+void Camera::rotatez(double value)
+{
+	rtz += value;
+	if (rtz > 360) rtz -= 360;
+	if (rtz < 0) rtz += 360;
 }
 
 

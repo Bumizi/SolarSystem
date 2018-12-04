@@ -450,7 +450,13 @@ void Keyboard(unsigned char key, int x, int y)
 		Speed /= 10;
 		break;
 	case 'i':
-		cx = 0, cy = 50, cz = 50;
+		Camera.invalidate_values();
+		break;
+	case 'r':
+		Camera.rotatez(CAMERA_MOVE / 2.0);
+		break;
+	case 'R':
+		Camera.rotatez(-CAMERA_MOVE / 2.0);
 		break;
 	case 'm':
 		if (!model)

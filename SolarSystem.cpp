@@ -48,6 +48,8 @@ void Mouse(int button, int state, int x, int y);
 void MouseWheel(int button, int dir, int x, int y);
 void Keyboard(unsigned char key, int x, int y);
 void Motion(int x, int y);
+void Fix_Camera(void);
+void set_at(void);
 void StarRotationTimerFunction(int value);
 void TimerFunction(int value);
 void mul(double m1, double m2, double m3);
@@ -98,10 +100,11 @@ GLvoid drawScene(GLvoid)
 	//Camera.invalidate_values();
 	//카메라 EYE, AY, UP 벡터로 시점 설정
 	glMatrixMode(GL_MODELVIEW);
+
+	Fix_Camera();//고정 뷰일 때, 함수 실행됨
 	gluLookAt(Camera.EYEx, Camera.EYEy, Camera.EYEz,
 		Camera.ATx, Camera.ATy, Camera.ATz,
 		Camera.UPx, Camera.UPy, Camera.UPz);
-
 
 	//태양
 	glPushMatrix();
@@ -330,7 +333,7 @@ void MouseWheel(int button, int dir, int x, int y) {
 	int dx = 800 - x; int dy = y - 450;
 	if (dir > 0) {
 		Camera.move_front(CAMERA_MOVE * 3);
-		if (dist != 0) {
+		if (dist != 0 && Camera.view_type() != 'N') {
 			if(dx != 0)Camera.move_right(dx * CAMERA_MOVE * 3 / dist);
 			if(dy != 0)Camera.move_up(dy * CAMERA_MOVE * 3 / dist);
 		}
@@ -341,16 +344,15 @@ void MouseWheel(int button, int dir, int x, int y) {
 }
 void Motion(int x, int y) {
 	if (drag) {
-		//printf("%d, %d\n", x, y);
 		mx = x; my = y;
 	}
 	else if (wheel_drag) {
-		//printf("%d, %d\n", x, y);
 		mx = x; my = y;
 	}
 }
 void Keyboard(unsigned char key, int x, int y)
 {
+	char Camera_Type = Camera.view_type();
 	switch (key) {
 	case 'X':
 		if (!reverse)
@@ -422,26 +424,84 @@ void Keyboard(unsigned char key, int x, int y)
 			rotate = false;
 		break;
 	case 'w':
+		if (Camera_Type == 'N') return;
 		Camera.move_up(CAMERA_MOVE);
 		break;
 	case 'a':
+		if (Camera_Type == 'N') return;
 		Camera.move_left(CAMERA_MOVE);
 		break;
 	case 's':
+		if (Camera_Type == 'N') return;
 		Camera.move_down(CAMERA_MOVE);
 		break;
 	case 'd':
+		if (Camera_Type == 'N') return;
 		Camera.move_right(CAMERA_MOVE);
 		break;
 	case 't':case 'T':
+		Camera.Planet_Selection = 0;
 		Camera.invalidate_values();
 		Camera.set_pos(0, 900, 0);
-		Reshape(ww, wh);
 		break;
 	case 'f':case 'F':
+		Camera.Planet_Selection = 0;
 		Camera.invalidate_values();
 		Camera.set_pos(0, 0, 1600);
-		Reshape(ww, wh);
+		break;
+	case '1'://태양
+		Camera.Planet_Selection = 1;
+		Camera.invalidate_values();
+		Camera.set_pos(0, 0, 0);
+		Camera.move_front(2000 - Sun.Radius * 2);
+		break;
+	case '2'://수성
+		Camera.Planet_Selection = 2;
+		Camera.invalidate_values();
+		Camera.set_pos(0, 0, 0);
+		Camera.move_front(2000 - Mercury.Radius * 2);
+		break;
+	case '3'://금성
+		Camera.Planet_Selection = 3;
+		Camera.invalidate_values();
+		Camera.set_pos(0, 0, 0);
+		Camera.move_front(2000 - Venus.Radius * 2);
+		break;
+	case '4'://지구
+		Camera.Planet_Selection = 4;
+		Camera.invalidate_values();
+		Camera.set_pos(0, 0, 0);
+		Camera.move_front(2000 - Earth.Radius * 2);
+		break;
+	case '5'://화성
+		Camera.Planet_Selection = 5;
+		Camera.invalidate_values();
+		Camera.set_pos(0, 0, 0);
+		Camera.move_front(2000 - Mars.Radius * 2);
+		break;
+	case '6'://목성
+		Camera.Planet_Selection = 6;
+		Camera.invalidate_values();
+		Camera.set_pos(0, 0, 0);
+		Camera.move_front(2000 - Jupiter.Radius * 2);
+		break;
+	case '7'://토성
+		Camera.Planet_Selection = 7;
+		Camera.invalidate_values();
+		Camera.set_pos(0, 0, 0);
+		Camera.move_front(2000 - Saturn.Radius * 2);
+		break;
+	case '8'://천왕성
+		Camera.Planet_Selection = 8;
+		Camera.invalidate_values();
+		Camera.set_pos(0, 0, 0);
+		Camera.move_front(2000 - Uranus.Radius * 2);
+		break;
+	case '9'://해왕성
+		Camera.Planet_Selection = 9;
+		Camera.invalidate_values();
+		Camera.set_pos(0, 0, 0);
+		Camera.move_front(2000 - Neptune.Radius * 2);
 		break;
 	case '+':
 		Speed *= 10;
@@ -453,9 +513,11 @@ void Keyboard(unsigned char key, int x, int y)
 		Camera.invalidate_values();
 		break;
 	case 'r':
+		if (Camera_Type == 'N') return;
 		Camera.rotatez(CAMERA_MOVE / 2.0);
 		break;
 	case 'R':
+		if (Camera_Type == 'N') return;
 		Camera.rotatez(-CAMERA_MOVE / 2.0);
 		break;
 	case 'm':
@@ -478,6 +540,8 @@ void Keyboard(unsigned char key, int x, int y)
 	glutPostRedisplay();
 }
 void TimerFunction(int value) {
+	if(Camera.view_type() == 'N')
+
 	if (rotate) {
 		if (!reverse) {
 			if (rt < 360)
@@ -551,12 +615,98 @@ void MouseTranslated(void)
 		Camera.rty -= dx / 10.0;
 		Camera.rtx -= dy / 10.0;
 		tx += Camera.rtx, ty += Camera.rty;
-		printf("총 회전량 합산 : %lf, %lf\n", tx, ty);
-		//printf("카메라가 보는 보는 곳 : %lf, %lf, %lf\n",
-		//	Camera.ATx, Camera.ATy, Camera.ATz);
 	}
 
 	ox = mx, oy = my;
+}
+void Fix_Camera(void)
+{
+	if (Camera.view_type() != 'N')return;
+
+	double eyex, eyey, eyez;
+	double ratio_c, ratio_s;
+
+	switch (Camera.Planet_Selection)
+	{
+	case 1:
+		eyex = Sun.xPos - Sun.Radius;
+		eyey = Sun.yPos + Sun.Radius;
+		eyez = Sun.zPos;
+		Camera.set_pos(eyex, eyey, eyez);
+		break;
+	case 2://
+		ratio_c = cos(Mercury.Revolution * PI / 180);
+		ratio_s = sin(-Mercury.Revolution * PI / 180);
+		eyex = (Mercury.xPos - Mercury.Radius) * ratio_c ;
+		eyey = Mercury.yPos;
+		eyez = (Mercury.xPos - Mercury.Radius) * ratio_s ;
+		Camera.set_pos(eyex, eyey + Mercury.Radius / 3.0 , eyez - Mercury.Radius);
+		Camera.set_at(eyex, eyey, eyez);
+		break;
+	case 3:
+		ratio_c = cos(Venus.Revolution * PI / 180);
+		ratio_s = sin(-Venus.Revolution * PI / 180);
+		eyex = (Venus.xPos - Venus.Radius)* ratio_c;
+		eyey = Venus.yPos;
+		eyez = (Venus.xPos - Venus.Radius) * ratio_s;
+		Camera.set_pos(eyex, eyey + Venus.Radius / 3.0, eyez - Venus.Radius);
+		Camera.set_at(eyex, eyey, eyez);
+		break;
+	case 4:
+		ratio_c = cos(Earth.Revolution * PI / 180);
+		ratio_s = sin(-Earth.Revolution * PI / 180);
+		eyex = (Earth.xPos - Earth.Radius)* ratio_c;
+		eyey = Earth.yPos;
+		eyez = (Earth.xPos - Earth.Radius) * ratio_s;
+		Camera.set_pos(eyex, eyey + Earth.Radius / 3.0, eyez - Earth.Radius);
+		Camera.set_at(eyex, eyey, eyez);
+		break;
+	case 5:
+		ratio_c = cos(Mars.Revolution * PI / 180);
+		ratio_s = sin(-Mars.Revolution * PI / 180);
+		eyex = (Mars.xPos - Mars.Radius)* ratio_c;
+		eyey = Mars.yPos + Mars.Radius;
+		eyez = (Mars.xPos - Mars.Radius) * ratio_s;
+		Camera.set_pos(eyex, eyey + Mars.Radius / 3.0, eyez - Mars.Radius);
+		Camera.set_at(eyex, eyey, eyez);
+		break;
+	case 6:
+		ratio_c = cos(Jupiter.Revolution * PI / 180);
+		ratio_s = sin(-Jupiter.Revolution * PI / 180);
+		eyex = (Jupiter.xPos - Jupiter.Radius)* ratio_c;
+		eyey = Jupiter.yPos + Jupiter.Radius;
+		eyez = (Jupiter.xPos - Jupiter.Radius) * ratio_s;
+		Camera.set_pos(eyex, eyey + Jupiter.Radius / 3.0, eyez - Jupiter.Radius);
+		Camera.set_at(eyex, eyey, eyez);
+		break;
+	case 7:
+		ratio_c = cos(Saturn.Revolution * PI / 180);
+		ratio_s = sin(-Saturn.Revolution * PI / 180);
+		eyex = (Saturn.xPos - Saturn.Radius)* ratio_c;
+		eyey = Saturn.yPos + Saturn.Radius;
+		eyez = (Saturn.xPos - Saturn.Radius) * ratio_s;
+		Camera.set_pos(eyex, eyey + Saturn.Radius / 3.0, eyez - Saturn.Radius);
+		Camera.set_at(eyex, eyey, eyez);
+		break;
+	case 8:
+		ratio_c = cos(Uranus.Revolution * PI / 180);
+		ratio_s = sin(-Uranus.Revolution * PI / 180);
+		eyex = (Uranus.xPos - Uranus.Radius)* ratio_c;
+		eyey = Uranus.yPos + Uranus.Radius;
+		eyez = (Uranus.xPos - Uranus.Radius) * ratio_s;
+		Camera.set_pos(eyex, eyey + Uranus.Radius / 3.0, eyez - Uranus.Radius);
+		Camera.set_at(eyex, eyey, eyez);
+		break;
+	case 9:
+		ratio_c = cos(Neptune.Revolution * PI / 180);
+		ratio_s = sin(-Neptune.Revolution * PI / 180);
+		eyex = (Neptune.xPos - Neptune.Radius)* ratio_c;
+		eyey = Neptune.yPos + Neptune.Radius;
+		eyez = (Neptune.xPos - Neptune.Radius) * ratio_s;
+		Camera.set_pos(eyex, eyey + Neptune.Radius / 3.0, eyez - Neptune.Radius);
+		Camera.set_at(eyex, eyey, eyez);
+		break;
+	}
 }
 void StarRotationTimerFunction(int value) {
 	if (Sun.Rotation < 360)
@@ -644,7 +794,6 @@ void StarRotationTimerFunction(int value) {
 	glutPostRedisplay(); // 화면 재 출력
 	glutTimerFunc(10, StarRotationTimerFunction, 1); // 타이머함수 재 설정
 }
-
 void mul(double x, double y, double z)
 {
 	glTranslated(0, 0, 2000.0);

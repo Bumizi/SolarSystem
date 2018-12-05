@@ -8,6 +8,7 @@ struct Camera {
 	double UPx = 0, UPy = 1, UPz = 0;
 	double rtx = 0, rty = 0, rtz = 0;
 	double mvx = 0, mvy = 0, mvz = 0;
+	int Planet_Selection = 0;
 	void set_pos(double x, double y, double z);
 	char view_type(void);
 	void move_up(double value);
@@ -20,6 +21,7 @@ struct Camera {
 	void rotatex(double value);
 	void rotatey(double value);
 	void rotatez(double value);
+	void set_at(double x, double y, double z);
 }Camera;
 
 //현재 카메라 뷰의 종류를 알아냄
@@ -59,6 +61,7 @@ void Camera::invalidate_values(void) {
 	rtx = 0, rty = 0, rtz = 0;
 }
 
+//카메라 회전 함수
 void Camera::rotatex(double value)
 {
 	rtx += value;
@@ -78,7 +81,6 @@ void Camera::rotatez(double value)
 	if (rtz < 0) rtz += 360;
 }
 
-
 //탑뷰(0, 900, 0)
 //프런트 뷰(0, 0, 1600)
 //디폴트 뷰(0, 900, 1600)
@@ -86,7 +88,7 @@ void Camera::rotatez(double value)
 void Camera::set_pos(double x, double y, double z) {
 	EYEx = x, EYEy = y, EYEz = z;
 	
-	printf("EYE값 변경 : %lf, %lf, %lf\n", EYEx, EYEy, EYEz);
+	//printf("EYE값 변경 : %lf, %lf, %lf\n", EYEx, EYEy, EYEz);
 	switch (view_type())
 	{
 	case 'T':
@@ -96,5 +98,10 @@ void Camera::set_pos(double x, double y, double z) {
 		ATx = 0, ATy = 1, ATz = 0;
 		break;
 	}
+}
+
+void Camera::set_at(double x, double y, double z)
+{
+	ATx = x; ATy = y; ATz = z;
 }
 

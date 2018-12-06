@@ -256,6 +256,17 @@ GLvoid drawScene(GLvoid)
 		Camera.ATx, Camera.ATy, Camera.ATz,
 		Camera.UPx, Camera.UPy, Camera.UPz);
 
+	////////////////////////////////////////////
+	glColor3b(0, 120, 0);
+	for (int i = 0; i < 10; i++) {
+		glRasterPos3f(1000, 1000 - i*100, 0);
+		int len = (int)strlen(Sun.info[i]);
+		for (int j = 0; j < len; j++) {
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, (int)Sun.info[i][j]);
+			//glutBitmapWidth(GLUT_BITMAP_HELVETICA_18, len);
+		}
+	}
+	///////////////////////////////////////////
 
 	//еб╬Г
 	glPushMatrix();

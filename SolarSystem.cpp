@@ -16,6 +16,8 @@
 #include "Neptune.h"
 #include "Camera.h"
 
+#define TEXTURE_NUMBER 9
+
 struct Orbit {
 	double x, z;
 	double degree = 0;
@@ -44,6 +46,147 @@ bool drag = false, wheel_drag = false;
 
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
+GLubyte *pBytes; // 데이터를 가리킬 포인터
+BITMAPINFO *info; // 비트맵 헤더 저장할 변수
+GLubyte * TexBits;
+GLuint textures[TEXTURE_NUMBER];
+GLubyte * LoadDIBitMap(const char *filename, BITMAPINFO **info)
+{
+	FILE *fp;
+	GLubyte *bits;
+	int bitsize, infosize;
+	BITMAPFILEHEADER header;
+	// 바이너리 읽기 모드로 파일을 연다
+	if ((fp = fopen(filename, "rb")) == NULL)
+		return NULL;
+	// 비트맵 파일 헤더를 읽는다.
+	if (fread(&header, sizeof(BITMAPFILEHEADER), 1, fp) < 1) {
+		fclose(fp);
+		return NULL;
+	}
+	// 파일이 BMP 파일인지 확인한다.
+	if (header.bfType != 'MB') {
+		fclose(fp);
+		return NULL;
+	}
+	// BITMAPINFOHEADER 위치로 간다.
+	infosize = header.bfOffBits - sizeof(BITMAPFILEHEADER);
+	// 비트맵 이미지 데이터를 넣을 메모리 할당을 한다.
+	if ((*info = (BITMAPINFO *)malloc(infosize)) == NULL) {
+		fclose(fp);
+		exit(0);
+		return NULL;
+	}
+	// 비트맵 인포 헤더를 읽는다.
+	if (fread(*info, 1, infosize, fp) < (unsigned int)infosize) {
+		free(*info);
+		fclose(fp);
+		return NULL;
+	}
+	// 비트맵의 크기 설정
+	if ((bitsize = (*info)->bmiHeader.biSizeImage) == 0)
+		bitsize = ((*info)->bmiHeader.biWidth*(*info)->bmiHeader.biBitCount + 7) / 8.0 * abs((*info)->bmiHeader.biHeight);
+	// 비트맵의 크기만큼 메모리를 할당한다.
+	if ((bits = (unsigned char *)malloc(bitsize)) == NULL) {
+		free(*info);
+		fclose(fp);
+		return NULL;
+	}
+	// 비트맵 데이터를 bit(GLubyte 타입)에 저장한다.
+	if (fread(bits, 1, bitsize, fp) < (unsigned int)bitsize) {
+		free(*info); free(bits);
+		fclose(fp);
+		return NULL;
+	}
+	fclose(fp);
+	return bits;
+}
+void initTextures() {
+	glGenTextures(TEXTURE_NUMBER, textures); //텍스처 이름을 생성한다. n:생성되어야할 텍스처이름의 수 
+
+	glBindTexture(GL_TEXTURE_2D, textures[0]); // 텍스처링 할 객체에 텍스처를 연결해준다.
+	pBytes = LoadDIBitMap("Sun.bmp", &info);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, 2048, 1024, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
+	
+	glBindTexture(GL_TEXTURE_2D, textures[1]);
+	pBytes = LoadDIBitMap("Mercury.bmp", &info);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, 2048, 1024, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
+
+	glBindTexture(GL_TEXTURE_2D, textures[2]);
+	pBytes = LoadDIBitMap("Venus.bmp", &info);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, 2048, 1024, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
+	
+	glBindTexture(GL_TEXTURE_2D, textures[3]);
+	pBytes = LoadDIBitMap("Earth.bmp", &info);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, 2048, 1024, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
+
+	glBindTexture(GL_TEXTURE_2D, textures[4]);
+	pBytes = LoadDIBitMap("Mars.bmp", &info);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, 2048, 1024, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
+
+	glBindTexture(GL_TEXTURE_2D, textures[5]);
+	pBytes = LoadDIBitMap("Jupiter.bmp", &info);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, 2048, 1024, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
+
+	glBindTexture(GL_TEXTURE_2D, textures[6]);
+	pBytes = LoadDIBitMap("Saturn.bmp", &info);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, 2048, 1024, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
+
+	glBindTexture(GL_TEXTURE_2D, textures[7]);
+	pBytes = LoadDIBitMap("Uranus.bmp", &info);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, 2048, 1024, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
+
+	glBindTexture(GL_TEXTURE_2D, textures[8]);
+	pBytes = LoadDIBitMap("Neptune.bmp", &info);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, 2048, 1024, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
+
+	glEnable(GL_TEXTURE_2D);
+}
 void Mouse(int button, int state, int x, int y);
 void MouseWheel(int button, int dir, int x, int y);
 void Keyboard(unsigned char key, int x, int y);
@@ -70,6 +213,7 @@ void main(int argc, char *argv[])
 	glutInitWindowPosition(100, 100); // 윈도우의 위치지정
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT); // 윈도우의 크기 지정
 	glutCreateWindow("TheSolarSystem"); // 윈도우 생성 (윈도우 이름)
+	initTextures();
 	glutDisplayFunc(drawScene); // 출력 함수의 지정
 	glutReshapeFunc(Reshape);
 	glutKeyboardFunc(Keyboard);
@@ -87,6 +231,7 @@ GLvoid drawScene(GLvoid)
 	glEnable(GL_DEPTH_TEST);
 	glLoadIdentity();
 
+
 	glMatrixMode(GL_PROJECTION);
 	MouseTranslated();
 	Reshape(ww, wh);
@@ -101,19 +246,29 @@ GLvoid drawScene(GLvoid)
 	//카메라 EYE, AY, UP 벡터로 시점 설정
 	glMatrixMode(GL_MODELVIEW);
 
+
 	Fix_Camera();//고정 뷰일 때, 함수 실행됨
 	gluLookAt(Camera.EYEx, Camera.EYEy, Camera.EYEz,
 		Camera.ATx, Camera.ATy, Camera.ATz,
 		Camera.UPx, Camera.UPy, Camera.UPz);
 
+	
+	
+	glEnable(GL_TEXTURE_GEN_S);
+	glEnable(GL_TEXTURE_GEN_T);
+	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+
 	//태양
 	glPushMatrix();
 	glTranslated(Sun.xPos, Sun.yPos, Sun.zPos);
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	glRotated(Sun.Rotation, 0, 1, 0);
-	glColor3b(Sun.RGB[0], Sun.RGB[1], Sun.RGB[2]);
-	glutSolidSphere(Sun.Radius, 30, 30);
+	//glColor3b(Sun.RGB[0], Sun.RGB[1], Sun.RGB[2]);
+	glutSolidSphere(Sun.Radius, 128, 128);
+	
 	glColor3f(1, 1, 1);
-	glutWireSphere(Sun.Radius+10, 15, 15);
+	//glutWireSphere(Sun.Radius+10, 15, 15);
 	glPopMatrix();
 
 	//수성
@@ -127,13 +282,15 @@ GLvoid drawScene(GLvoid)
 	}
 	glEnd();
 	Mercury.Orbit_Degree = 0;
+	glBindTexture(GL_TEXTURE_2D, textures[1]);
 	glRotated(Mercury.Revolution, 0, 1, 0);
 	glTranslated(Mercury.xPos, Mercury.yPos, Mercury.zPos);
 	glRotated(Mercury.Rotation, 0, 1, 0);
-	glColor3b(Mercury.RGB[0], Mercury.RGB[1], Mercury.RGB[2]);
-	glutSolidSphere(Mercury.Radius, 30, 30);
-	glColor3f(1, 1, 1);
-	glutWireSphere(Mercury.Radius + 10, 15, 15);
+	//glColor3b(Mercury.RGB[0], Mercury.RGB[1], Mercury.RGB[2]);
+	glutSolidSphere(Mercury.Radius, 128, 128);
+	
+	//glColor3f(1, 1, 1);
+	//glutWireSphere(Mercury.Radius + 10, 15, 15);
 	glPopMatrix();
 
 	//금성
@@ -147,13 +304,14 @@ GLvoid drawScene(GLvoid)
 	}
 	glEnd();
 	Venus.Orbit_Degree = 0;
+	glBindTexture(GL_TEXTURE_2D, textures[2]);
 	glRotated(Venus.Revolution, 0, 1, 0);
 	glTranslated(Venus.xPos, Venus.yPos, Venus.zPos);
 	glRotated(Venus.Rotation, 0, 1, 0);
-	glColor3b(Venus.RGB[0], Venus.RGB[1], Venus.RGB[2]);
-	glutSolidSphere(Venus.Radius, 30, 30);
-	glColor3f(1, 1, 1);
-	glutWireSphere(Venus.Radius + 10, 15, 15);
+	//glColor3b(Venus.RGB[0], Venus.RGB[1], Venus.RGB[2]);
+	glutSolidSphere(Venus.Radius, 128, 128);
+	//glColor3f(1, 1, 1);
+	//glutWireSphere(Venus.Radius + 10, 15, 15);
 	glPopMatrix();
 
 	//지구
@@ -167,13 +325,14 @@ GLvoid drawScene(GLvoid)
 	}
 	glEnd();
 	Earth.Orbit_Degree = 0;
+	glBindTexture(GL_TEXTURE_2D, textures[3]);
 	glRotated(Earth.Revolution, 0, 1, 0);
 	glTranslated(Earth.xPos, Earth.yPos, Earth.zPos);
 	glRotated(Earth.Rotation, 0, 1, 0);
-	glColor3b(Earth.RGB[0], Earth.RGB[1], Earth.RGB[2]);
-	glutSolidSphere(Earth.Radius, 30, 30);
-	glColor3f(1, 1, 1);
-	glutWireSphere(Earth.Radius + 10, 15, 15);
+	//glColor3b(Earth.RGB[0], Earth.RGB[1], Earth.RGB[2]);
+	glutSolidSphere(Earth.Radius, 128, 128);
+	//glColor3f(1, 1, 1);
+	//glutWireSphere(Earth.Radius + 10, 15, 15);
 	glPopMatrix();
 
 	//화성
@@ -187,13 +346,14 @@ GLvoid drawScene(GLvoid)
 	}
 	glEnd();
 	Mars.Orbit_Degree = 0;
+	glBindTexture(GL_TEXTURE_2D, textures[4]);
 	glRotated(Mars.Revolution, 0, 1, 0);
 	glTranslated(Mars.xPos, Mars.yPos, Mars.zPos);
 	glRotated(Mars.Rotation, 0, 1, 0);
-	glColor3b(Mars.RGB[0], Mars.RGB[1], Mars.RGB[2]);
-	glutSolidSphere(Mars.Radius, 30, 30);
-	glColor3f(1, 1, 1);
-	glutWireSphere(Mars.Radius + 10, 15, 15);
+	//glColor3b(Mars.RGB[0], Mars.RGB[1], Mars.RGB[2]);
+	glutSolidSphere(Mars.Radius, 128, 128);
+	//glColor3f(1, 1, 1);
+	//glutWireSphere(Mars.Radius + 10, 15, 15);
 	glPopMatrix();
 
 	//목성
@@ -207,13 +367,14 @@ GLvoid drawScene(GLvoid)
 	}
 	glEnd();
 	Jupiter.Orbit_Degree = 0;
+	glBindTexture(GL_TEXTURE_2D, textures[5]);
 	glRotated(Jupiter.Revolution, 0, 1, 0);
 	glTranslated(Jupiter.xPos, Jupiter.yPos, Jupiter.zPos);
 	glRotated(Jupiter.Rotation, 0, 1, 0);
-	glColor3b(Jupiter.RGB[0], Jupiter.RGB[1], Jupiter.RGB[2]);
-	glutSolidSphere(Jupiter.Radius, 30, 30);
-	glColor3f(1, 1, 1);
-	glutWireSphere(Jupiter.Radius + 10, 15, 15);
+	//glColor3b(Jupiter.RGB[0], Jupiter.RGB[1], Jupiter.RGB[2]);
+	glutSolidSphere(Jupiter.Radius, 128, 128);
+	//glColor3f(1, 1, 1);
+	//glutWireSphere(Jupiter.Radius + 10, 15, 15);
 	glPopMatrix();
 
 	//토성
@@ -227,13 +388,14 @@ GLvoid drawScene(GLvoid)
 	}
 	glEnd();
 	Saturn.Orbit_Degree = 0;
+	glBindTexture(GL_TEXTURE_2D, textures[6]);
 	glRotated(Saturn.Revolution, 0, 1, 0);
 	glTranslated(Saturn.xPos, Saturn.yPos, Saturn.zPos);
 	glRotated(Saturn.Rotation, 0, 1, 0);
-	glColor3b(Saturn.RGB[0], Saturn.RGB[1], Saturn.RGB[2]);
-	glutSolidSphere(Saturn.Radius, 30, 30);
-	glColor3f(1, 1, 1);
-	glutWireSphere(Saturn.Radius, 30, 30);
+	//glColor3b(Saturn.RGB[0], Saturn.RGB[1], Saturn.RGB[2]);
+	glutSolidSphere(Saturn.Radius, 128, 128);
+	//glColor3f(1, 1, 1);
+	//glutWireSphere(Saturn.Radius, 30, 30);
 	glPopMatrix();
 
 	//천왕성
@@ -247,13 +409,14 @@ GLvoid drawScene(GLvoid)
 	}
 	glEnd();
 	Uranus.Orbit_Degree = 0;
+	glBindTexture(GL_TEXTURE_2D, textures[7]);
 	glRotated(Uranus.Revolution, 0, 1, 0);
 	glTranslated(Uranus.xPos, Uranus.yPos, Uranus.zPos);
 	glRotated(Uranus.Rotation, 0, 1, 0);
-	glColor3b(Uranus.RGB[0], Uranus.RGB[1], Uranus.RGB[2]);
-	glutSolidSphere(Uranus.Radius, 30, 30);
-	glColor3f(1, 1, 1);
-	glutWireSphere(Uranus.Radius, 30, 30);
+	//glColor3b(Uranus.RGB[0], Uranus.RGB[1], Uranus.RGB[2]);
+	glutSolidSphere(Uranus.Radius, 128, 128);
+	//glColor3f(1, 1, 1);
+	//glutWireSphere(Uranus.Radius, 30, 30);
 	glPopMatrix();
 
 	//해왕성
@@ -267,16 +430,18 @@ GLvoid drawScene(GLvoid)
 	}
 	glEnd();
 	Neptune.Orbit_Degree = 0;
+	glBindTexture(GL_TEXTURE_2D, textures[8]);
 	glRotated(Neptune.Revolution, 0, 1, 0);
 	glTranslated(Neptune.xPos, Neptune.yPos, Neptune.zPos);
 	glRotated(Neptune.Rotation, 0, 1, 0);
-	glColor3b(Neptune.RGB[0], Neptune.RGB[1], Neptune.RGB[2]);
-	glutSolidSphere(Neptune.Radius, 30, 30);
-	glColor3f(1, 1, 1);
-	glutWireSphere(Neptune.Radius, 30, 30);
+	//glColor3b(Neptune.RGB[0], Neptune.RGB[1], Neptune.RGB[2]);
+	glutSolidSphere(Neptune.Radius, 128, 128);	//glColor3f(1, 1, 1);
+	//glutWireSphere(Neptune.Radius, 30, 30);
 	glPopMatrix();
 
 
+	glDisable(GL_TEXTURE_GEN_S);
+	glDisable(GL_TEXTURE_GEN_T);
 	glutSwapBuffers();
 	//glFlush(); // 화면에 출력하기
 }

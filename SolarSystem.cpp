@@ -18,6 +18,9 @@
 
 #define TEXTURE_NUMBER 9
 
+struct XYZ {
+	double x, y, z;
+}C;
 struct Orbit {
 	double x, z;
 	double degree = 0;
@@ -192,7 +195,6 @@ void MouseWheel(int button, int dir, int x, int y);
 void Keyboard(unsigned char key, int x, int y);
 void Motion(int x, int y);
 void Fix_Camera(void);
-void set_at(void);
 void StarRotationTimerFunction(int value);
 void TimerFunction(int value);
 void mul(double m1, double m2, double m3);
@@ -201,6 +203,8 @@ double abs(double x)
 {
 	return (x > 0) ? x : -x;
 }
+
+void CreateSphere(XYZ c, double r, int n);
 
 //마우스 움직임에 대한 translate 처리 함수
 void MouseTranslated(void);
@@ -252,12 +256,6 @@ GLvoid drawScene(GLvoid)
 		Camera.ATx, Camera.ATy, Camera.ATz,
 		Camera.UPx, Camera.UPy, Camera.UPz);
 
-	
-	
-	glEnable(GL_TEXTURE_GEN_S);
-	glEnable(GL_TEXTURE_GEN_T);
-	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 
 	//태양
 	glPushMatrix();
@@ -265,7 +263,9 @@ GLvoid drawScene(GLvoid)
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	glRotated(Sun.Rotation, 0, 1, 0);
 	//glColor3b(Sun.RGB[0], Sun.RGB[1], Sun.RGB[2]);
-	glutSolidSphere(Sun.Radius, 128, 128);
+	C.x = Sun.xPos, C.y = Sun.yPos, C.z = Sun.zPos;
+	CreateSphere(C, Sun.Radius, 128);
+	//glutSolidSphere(Sun.Radius, 128, 128);
 	
 	glColor3f(1, 1, 1);
 	//glutWireSphere(Sun.Radius+10, 15, 15);
@@ -284,10 +284,12 @@ GLvoid drawScene(GLvoid)
 	Mercury.Orbit_Degree = 0;
 	glBindTexture(GL_TEXTURE_2D, textures[1]);
 	glRotated(Mercury.Revolution, 0, 1, 0);
-	glTranslated(Mercury.xPos, Mercury.yPos, Mercury.zPos);
+	//glTranslated(Mercury.xPos, Mercury.yPos, Mercury.zPos);
 	glRotated(Mercury.Rotation, 0, 1, 0);
 	//glColor3b(Mercury.RGB[0], Mercury.RGB[1], Mercury.RGB[2]);
-	glutSolidSphere(Mercury.Radius, 128, 128);
+	C.x = Mercury.xPos, C.y = Mercury.yPos, C.z = Mercury.zPos;
+	CreateSphere(C, Mercury.Radius, 128);
+	//glutSolidSphere(Mercury.Radius, 128, 128);
 	
 	//glColor3f(1, 1, 1);
 	//glutWireSphere(Mercury.Radius + 10, 15, 15);
@@ -306,10 +308,12 @@ GLvoid drawScene(GLvoid)
 	Venus.Orbit_Degree = 0;
 	glBindTexture(GL_TEXTURE_2D, textures[2]);
 	glRotated(Venus.Revolution, 0, 1, 0);
-	glTranslated(Venus.xPos, Venus.yPos, Venus.zPos);
+	//glTranslated(Venus.xPos, Venus.yPos, Venus.zPos);
 	glRotated(Venus.Rotation, 0, 1, 0);
 	//glColor3b(Venus.RGB[0], Venus.RGB[1], Venus.RGB[2]);
-	glutSolidSphere(Venus.Radius, 128, 128);
+	C.x = Venus.xPos, C.y = Venus.yPos, C.z = Venus.zPos;
+	CreateSphere(C, Venus.Radius, 128);
+	//glutSolidSphere(Venus.Radius, 128, 128);
 	//glColor3f(1, 1, 1);
 	//glutWireSphere(Venus.Radius + 10, 15, 15);
 	glPopMatrix();
@@ -327,10 +331,12 @@ GLvoid drawScene(GLvoid)
 	Earth.Orbit_Degree = 0;
 	glBindTexture(GL_TEXTURE_2D, textures[3]);
 	glRotated(Earth.Revolution, 0, 1, 0);
-	glTranslated(Earth.xPos, Earth.yPos, Earth.zPos);
+	//glTranslated(Earth.xPos, Earth.yPos, Earth.zPos);
 	glRotated(Earth.Rotation, 0, 1, 0);
 	//glColor3b(Earth.RGB[0], Earth.RGB[1], Earth.RGB[2]);
-	glutSolidSphere(Earth.Radius, 128, 128);
+	C.x = Earth.xPos, C.y = Earth.yPos, C.z = Earth.zPos;
+	CreateSphere(C, Earth.Radius, 128);
+	//glutSolidSphere(Earth.Radius, 128, 128);
 	//glColor3f(1, 1, 1);
 	//glutWireSphere(Earth.Radius + 10, 15, 15);
 	glPopMatrix();
@@ -348,10 +354,12 @@ GLvoid drawScene(GLvoid)
 	Mars.Orbit_Degree = 0;
 	glBindTexture(GL_TEXTURE_2D, textures[4]);
 	glRotated(Mars.Revolution, 0, 1, 0);
-	glTranslated(Mars.xPos, Mars.yPos, Mars.zPos);
+	//glTranslated(Mars.xPos, Mars.yPos, Mars.zPos);
 	glRotated(Mars.Rotation, 0, 1, 0);
 	//glColor3b(Mars.RGB[0], Mars.RGB[1], Mars.RGB[2]);
-	glutSolidSphere(Mars.Radius, 128, 128);
+	C.x = Mars.xPos, C.y = Mars.yPos, C.z = Mars.zPos;
+	CreateSphere(C, Mars.Radius, 128);
+	//glutSolidSphere(Mars.Radius, 128, 128);
 	//glColor3f(1, 1, 1);
 	//glutWireSphere(Mars.Radius + 10, 15, 15);
 	glPopMatrix();
@@ -369,10 +377,12 @@ GLvoid drawScene(GLvoid)
 	Jupiter.Orbit_Degree = 0;
 	glBindTexture(GL_TEXTURE_2D, textures[5]);
 	glRotated(Jupiter.Revolution, 0, 1, 0);
-	glTranslated(Jupiter.xPos, Jupiter.yPos, Jupiter.zPos);
+	//glTranslated(Jupiter.xPos, Jupiter.yPos, Jupiter.zPos);
 	glRotated(Jupiter.Rotation, 0, 1, 0);
 	//glColor3b(Jupiter.RGB[0], Jupiter.RGB[1], Jupiter.RGB[2]);
-	glutSolidSphere(Jupiter.Radius, 128, 128);
+	C.x = Jupiter.xPos, C.y = Jupiter.yPos, C.z = Jupiter.zPos;
+	CreateSphere(C, Jupiter.Radius, 128);
+	//glutSolidSphere(Jupiter.Radius, 128, 128);
 	//glColor3f(1, 1, 1);
 	//glutWireSphere(Jupiter.Radius + 10, 15, 15);
 	glPopMatrix();
@@ -390,10 +400,12 @@ GLvoid drawScene(GLvoid)
 	Saturn.Orbit_Degree = 0;
 	glBindTexture(GL_TEXTURE_2D, textures[6]);
 	glRotated(Saturn.Revolution, 0, 1, 0);
-	glTranslated(Saturn.xPos, Saturn.yPos, Saturn.zPos);
+	//glTranslated(Saturn.xPos, Saturn.yPos, Saturn.zPos);
 	glRotated(Saturn.Rotation, 0, 1, 0);
 	//glColor3b(Saturn.RGB[0], Saturn.RGB[1], Saturn.RGB[2]);
-	glutSolidSphere(Saturn.Radius, 128, 128);
+	C.x = Saturn.xPos, C.y = Saturn.yPos, C.z = Saturn.zPos;
+	CreateSphere(C, Saturn.Radius, 128);
+	//glutSolidSphere(Saturn.Radius, 128, 128);
 	//glColor3f(1, 1, 1);
 	//glutWireSphere(Saturn.Radius, 30, 30);
 	glPopMatrix();
@@ -411,10 +423,12 @@ GLvoid drawScene(GLvoid)
 	Uranus.Orbit_Degree = 0;
 	glBindTexture(GL_TEXTURE_2D, textures[7]);
 	glRotated(Uranus.Revolution, 0, 1, 0);
-	glTranslated(Uranus.xPos, Uranus.yPos, Uranus.zPos);
+	//glTranslated(Uranus.xPos, Uranus.yPos, Uranus.zPos);
 	glRotated(Uranus.Rotation, 0, 1, 0);
 	//glColor3b(Uranus.RGB[0], Uranus.RGB[1], Uranus.RGB[2]);
-	glutSolidSphere(Uranus.Radius, 128, 128);
+	C.x = Uranus.xPos, C.y = Uranus.yPos, C.z = Uranus.zPos;
+	CreateSphere(C, Uranus.Radius, 128);
+	//glutSolidSphere(Uranus.Radius, 128, 128);
 	//glColor3f(1, 1, 1);
 	//glutWireSphere(Uranus.Radius, 30, 30);
 	glPopMatrix();
@@ -432,10 +446,12 @@ GLvoid drawScene(GLvoid)
 	Neptune.Orbit_Degree = 0;
 	glBindTexture(GL_TEXTURE_2D, textures[8]);
 	glRotated(Neptune.Revolution, 0, 1, 0);
-	glTranslated(Neptune.xPos, Neptune.yPos, Neptune.zPos);
+	//glTranslated(Neptune.xPos, Neptune.yPos, Neptune.zPos);
 	glRotated(Neptune.Rotation, 0, 1, 0);
 	//glColor3b(Neptune.RGB[0], Neptune.RGB[1], Neptune.RGB[2]);
-	glutSolidSphere(Neptune.Radius, 128, 128);	//glColor3f(1, 1, 1);
+	C.x = Neptune.xPos, C.y = Neptune.yPos, C.z = Neptune.zPos;
+	CreateSphere(C, Neptune.Radius, 128);
+	//glutSolidSphere(Neptune.Radius, 128, 128);	//glColor3f(1, 1, 1);
 	//glutWireSphere(Neptune.Radius, 30, 30);
 	glPopMatrix();
 
@@ -1022,4 +1038,52 @@ void mul(double x, double y, double z)
 double get_dist(double sx, double sy, double sz, double dx, double dy, double dz)
 {
 	return sqrt((sx - dx)*(sx - dx) + (sy - dy)*(sy - dy) + (sz - dz)*(sz - dz));
+}
+
+void CreateSphere(XYZ c, double r, int n) {
+	/* Create a sphere centered at c, with radius r, and precision n 
+	Draw a point for zero radius spheres */ 
+	int i, j; double theta1, theta2, theta3;
+	XYZ e, p;
+	if (r < 0)
+		r = -r; 
+	if (n < 0) 
+		n = -n; 
+	if (n < 4 || r <= 0) {
+		glBegin(GL_POINTS);
+		glVertex3f(c.x, c.y, c.z);
+		glEnd();
+		return;
+	} 
+	for (j = 0; j<n / 2; j++) {
+		theta1 = j * TWOPI / n - PID2; 
+		theta2 = (j + 1) * TWOPI / n - PID2; 
+		glBegin(GL_QUAD_STRIP); 
+		for (i = 0; i <= n; i++) { 
+			theta3 = i * TWOPI / n;
+
+			e.x = cos(theta2) * cos(theta3); 
+			e.y = sin(theta2); 
+			e.z = cos(theta2) * sin(theta3); 
+			p.x = c.x + r * e.x; 
+			p.y = c.y + r * e.y; 
+			p.z = c.z + r * e.z; 
+
+			glNormal3f(e.x, e.y, e.z); 
+			glTexCoord2f(i / (double)n, 2 * (j + 1) / (double)n); 
+			glVertex3f(p.x, p.y, p.z); 
+
+			e.x = cos(theta1) * cos(theta3); 
+			e.y = sin(theta1); 
+			e.z = cos(theta1) * sin(theta3); 
+			p.x = c.x + r * e.x; 
+			p.y = c.y + r * e.y; 
+			p.z = c.z + r * e.z; 
+
+			glNormal3f(e.x, e.y, e.z); 
+			glTexCoord2f(i / (double)n, 2 * j / (double)n); 
+			glVertex3f(p.x, p.y, p.z); 
+		} 
+		glEnd(); 
+	} 
 }

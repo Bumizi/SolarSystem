@@ -11,4 +11,7 @@ struct Star_Uranus {
 	double Rotation = 0;
 	double Revolution_Cycle = STAR_REVOLUTION_DAY_PER_mSECOND * 30688; //공전 주기 30688일
 	double Revolution = 0;
+	const char info[11][60] = { { "Name : Uranus" },{ "Diameter : 51,118 km" },{ "Volume : 6.834 x 10^13 km^3 " },{ "Mass : 8.6832 x 10^25 kg" },
+	{ "Rotation Period : 17 Hour" },{ "Orbital Period : 30,707 Day (84.07 Year)" },{ "Surface Gravity : 0.88 G" },{ "Atmosphere : Hydrogen(83%), Helium(15%)" },
+	{ "Surface Temperature (max) : -216 'C" }, { "Surface Temperature (min) : -224 'C" }, { "Satellites : 27" } };
 }Uranus;

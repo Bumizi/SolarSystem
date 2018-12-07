@@ -257,8 +257,8 @@ GLvoid drawScene(GLvoid)
 		Camera.UPx, Camera.UPy, Camera.UPz);
 
 	////////////////////////////////////////////
-	glColor3b(0, 120, 0);
-	for (int i = 0; i < 10; i++) {
+	glColor3f(0, 1, 0);
+	for (int i = 0; i < 11; i++) {
 		glRasterPos3f(1000, 1000 - i*100, 0);
 		int len = (int)strlen(Sun.info[i]);
 		for (int j = 0; j < len; j++) {
@@ -462,13 +462,15 @@ GLvoid drawScene(GLvoid)
 	//glColor3b(Neptune.RGB[0], Neptune.RGB[1], Neptune.RGB[2]);
 	C.x = Neptune.xPos, C.y = Neptune.yPos, C.z = Neptune.zPos;
 	CreateSphere(C, Neptune.Radius, 128);
-	//glutSolidSphere(Neptune.Radius, 128, 128);	//glColor3f(1, 1, 1);
+	//glutSolidSphere(Neptune.Radius, 128, 128);
+	//glColor3f(1, 1, 1);
 	//glutWireSphere(Neptune.Radius, 30, 30);
 	glPopMatrix();
 
 
 	glDisable(GL_TEXTURE_GEN_S);
-	glDisable(GL_TEXTURE_GEN_T);
+	glDisable(GL_TEXTURE_GEN_T);
+
 	glutSwapBuffers();
 	//glFlush(); // 화면에 출력하기
 }

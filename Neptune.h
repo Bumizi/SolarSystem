@@ -11,4 +11,7 @@ struct Star_Neptune {
 	double Rotation = 0;
 	double Revolution_Cycle = STAR_REVOLUTION_DAY_PER_mSECOND * 60182; //공전 주기 60182일
 	double Revolution = 0;
+	const char info[11][60] = { { "Name : Neptune" },{ "Diameter : 49,528 km" },{ "Volume : 6.254 x 10^13 km^3 " },{ "Mass : 1.0243 x 10^26 kg" },
+	{ "Rotation Period : 16 Hour" },{ "Orbital Period : 60,223 Day (164.8 Year)" },{ "Surface Gravity : 1.14 G" },{ "Atmosphere : Hydrogen(80%), Helium(19%)" },
+	{ "Surface Temperature (avg) : -218 'C" }, { "Satellites : 14" } };
 }Neptune;

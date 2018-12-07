@@ -187,14 +187,13 @@ void initTextures() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
-
-	glEnable(GL_TEXTURE_2D);
 }
 void Mouse(int button, int state, int x, int y);
 void MouseWheel(int button, int dir, int x, int y);
 void Keyboard(unsigned char key, int x, int y);
 void Motion(int x, int y);
 void Fix_Camera(void);
+void Show_Info(void);
 void StarRotationTimerFunction(int value);
 void TimerFunction(int value);
 void mul(double m1, double m2, double m3);
@@ -257,16 +256,10 @@ GLvoid drawScene(GLvoid)
 		Camera.UPx, Camera.UPy, Camera.UPz);
 
 	////////////////////////////////////////////
-	glColor3f(0, 1, 0);
-	for (int i = 0; i < 11; i++) {
-		glRasterPos3f(1000, 1000 - i*100, 0);
-		int len = (int)strlen(Sun.info[i]);
-		for (int j = 0; j < len; j++) {
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, (int)Sun.info[i][j]);
-			//glutBitmapWidth(GLUT_BITMAP_HELVETICA_18, len);
-		}
-	}
+	Show_Info();	
 	///////////////////////////////////////////
+
+	glColor3f(1, 1, 1);
 
 	//태양
 	glPushMatrix();
@@ -274,11 +267,11 @@ GLvoid drawScene(GLvoid)
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	glRotated(Sun.Rotation, 0, 1, 0);
 	//glColor3b(Sun.RGB[0], Sun.RGB[1], Sun.RGB[2]);
-	C.x = Sun.xPos, C.y = Sun.yPos, C.z = Sun.zPos;
+	//C.x = Sun.xPos, C.y = Sun.yPos, C.z = Sun.zPos;
 	CreateSphere(C, Sun.Radius, 128);
 	//glutSolidSphere(Sun.Radius, 128, 128);
 	
-	glColor3f(1, 1, 1);
+	//glColor3f(1, 1, 1);
 	//glutWireSphere(Sun.Radius+10, 15, 15);
 	glPopMatrix();
 
@@ -446,6 +439,7 @@ GLvoid drawScene(GLvoid)
 
 	//해왕성
 	glPushMatrix();
+	Show_Info();
 	glBegin(GL_LINE_LOOP);
 	for (int i = 0; i < 360; i++) {
 		loop_x = Neptune.xPos * cos(Neptune.Orbit_Degree * PI / 180);
@@ -466,10 +460,6 @@ GLvoid drawScene(GLvoid)
 	//glColor3f(1, 1, 1);
 	//glutWireSphere(Neptune.Radius, 30, 30);
 	glPopMatrix();
-
-
-	glDisable(GL_TEXTURE_GEN_S);
-	glDisable(GL_TEXTURE_GEN_T);
 
 	glutSwapBuffers();
 	//glFlush(); // 화면에 출력하기
@@ -661,7 +651,8 @@ void Keyboard(unsigned char key, int x, int y)
 		Camera.Planet_Selection = 3;
 		Camera.invalidate_values();
 		Camera.set_pos(0, 0, 0);
-		Camera.move_front(2000 - Venus.Radius * 2);
+		Camera.move_front(2000 - Venus.Radius * 3);
+		Camera.move_left(Venus.Radius);
 		break;
 	case '4'://지구
 		Camera.Planet_Selection = 4;
@@ -1077,12 +1068,138 @@ double get_dist(double sx, double sy, double sz, double dx, double dy, double dz
 {
 	return sqrt((sx - dx)*(sx - dx) + (sy - dy)*(sy - dy) + (sz - dz)*(sz - dz));
 }
+void Show_Info(void) {
+	if (Camera.view_type() == 'N') {
+		switch (Camera.Planet_Selection)
+		{
+		case 1: //태양
+			glPushMatrix();
+			glTranslated(Sun.xPos, Sun.yPos, Sun.zPos);
+			for (int i = 0; i < 11; i++) {
+				glRasterPos3f(Sun.xPos + 1000, Sun.yPos - 100 - i * 100, Sun.zPos + 500 + i * 12);
+				int len = (int)strlen(Sun.info[i]);
+				for (int j = 0; j < len; j++) {
+					glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, (int)Sun.info[i][j]);
+				}
+			}
+			glPopMatrix();
+			break;
+		case 2: //수성
+			glPushMatrix();
+			glRotated(Mercury.Revolution, 0, 1, 0);
+			glTranslated(Mercury.xPos, Mercury.yPos, Mercury.zPos);
+			for (int i = 0; i < 11; i++) {
+				glRasterPos3f(Mercury.Radius*1.5, Mercury.yPos + Mercury.Radius - i * Mercury.Radius/11, Mercury.zPos);
+				int len = (int)strlen(Mercury.info[i]);
+				for (int j = 0; j < len; j++) {
+					glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, (int)Mercury.info[i][j]);
+				}
+			}
+			glPopMatrix();
+			break;
+		case 3: //금성
+			glPushMatrix();
+			glRotated(Venus.Revolution, 0, 1, 0);
+			glTranslated(Venus.xPos, Venus.yPos, Venus.zPos);
+			for (int i = 0; i < 11; i++) {
+				glRasterPos3f(Venus.Radius*1.5, Venus.yPos + Venus.Radius - i * Venus.Radius/11, Venus.zPos);
+				int len = (int)strlen(Venus.info[i]);
+				for (int j = 0; j < len; j++) {
+					glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, (int)Venus.info[i][j]);
+				}
+			}
+			glPopMatrix();
+			break;
+		case 4: //지구
+			glPushMatrix();
+			glRotated(Earth.Revolution, 0, 1, 0);
+			glTranslated(Earth.xPos, Earth.yPos, Earth.zPos);
+			for (int i = 0; i < 11; i++) {
+				glRasterPos3f(Earth.Radius*1.5, Earth.yPos + Earth.Radius - i * Earth.Radius / 11, Earth.zPos);
+				int len = (int)strlen(Earth.info[i]);
+				for (int j = 0; j < len; j++) {
+					glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, (int)Earth.info[i][j]);
+				}
+			}
+			glPopMatrix();
+			break;
+		case 5: //화성
+			glPushMatrix();
+			glRotated(Mars.Revolution, 0, 1, 0);
+			glTranslated(Mars.xPos, Mars.yPos, Mars.zPos);
+			for (int i = 0; i < 11; i++) {
+				glRasterPos3f(Mars.Radius*1.5, Mars.yPos + Mars.Radius - i * Mars.Radius / 11, Mars.zPos);
+				int len = (int)strlen(Mars.info[i]);
+				for (int j = 0; j < len; j++) {
+					glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, (int)Mars.info[i][j]);
+				}
+			}
+			glPopMatrix();
+			break;
+		case 6: //목성
+			glPushMatrix();
+			glRotated(Jupiter.Revolution, 0, 1, 0);
+			glTranslated(Jupiter.xPos, Jupiter.yPos, Jupiter.zPos);
+			for (int i = 0; i < 11; i++) {
+				glRasterPos3f(Jupiter.Radius*1.5, Jupiter.yPos + Jupiter.Radius - i * Jupiter.Radius / 11, Jupiter.zPos);
+				int len = (int)strlen(Jupiter.info[i]);
+				for (int j = 0; j < len; j++) {
+					glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, (int)Jupiter.info[i][j]);
+				}
+			}
+			glPopMatrix();
+			break;
+		case 7: //토성
+			glPushMatrix();
+			glRotated(Saturn.Revolution, 0, 1, 0);
+			glTranslated(Saturn.xPos, Saturn.yPos, Saturn.zPos);
+			for (int i = 0; i < 11; i++) {
+				glRasterPos3f(Saturn.Radius*1.5, Saturn.yPos + Saturn.Radius - i * Saturn.Radius / 11, Saturn.zPos);
+				int len = (int)strlen(Saturn.info[i]);
+				for (int j = 0; j < len; j++) {
+					glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, (int)Saturn.info[i][j]);
+				}
+			}
+			glPopMatrix();
+			break;
+		case 8: //천왕성
+			glPushMatrix();
+			glRotated(Uranus.Revolution, 0, 1, 0);
+			glTranslated(Uranus.xPos, Uranus.yPos, Uranus.zPos);
+			for (int i = 0; i < 11; i++) {
+				glRasterPos3f(Uranus.Radius*1.5, Uranus.yPos + Uranus.Radius - i * Uranus.Radius / 11, Uranus.zPos);
+				int len = (int)strlen(Uranus.info[i]);
+				for (int j = 0; j < len; j++) {
+					glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, (int)Uranus.info[i][j]);
+				}
+			}
+			glPopMatrix();
+			break;
+		case 9: //해왕성
+			glPushMatrix();
+			glRotated(Neptune.Revolution, 0, 1, 0);
+			glTranslated(Neptune.xPos, Neptune.yPos, Neptune.zPos);
+			for (int i = 0; i < 11; i++) {
+				glRasterPos3f(Neptune.Radius*1.5, Neptune.yPos + Neptune.Radius - i * Neptune.Radius / 11, Neptune.zPos);
+				int len = (int)strlen(Neptune.info[i]);
+				for (int j = 0; j < len; j++) {
+					glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, (int)Neptune.info[i][j]);
+				}
+			}
+			glPopMatrix();
+			break;
+		}
+	}
+}
 
 void CreateSphere(XYZ c, double r, int n) {
 	/* Create a sphere centered at c, with radius r, and precision n 
 	Draw a point for zero radius spheres */ 
 	int i, j; double theta1, theta2, theta3;
 	XYZ e, p;
+
+	glEnable(GL_TEXTURE_2D);
+
 	if (r < 0)
 		r = -r; 
 	if (n < 0) 
@@ -1123,5 +1240,6 @@ void CreateSphere(XYZ c, double r, int n) {
 			glVertex3f(p.x, p.y, p.z); 
 		} 
 		glEnd(); 
-	} 
+	}
+	glDisable(GL_TEXTURE_2D);
 }

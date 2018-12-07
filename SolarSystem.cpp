@@ -295,10 +295,10 @@ GLvoid drawScene(GLvoid)
 	Mercury.Orbit_Degree = 0;
 	glBindTexture(GL_TEXTURE_2D, textures[1]);
 	glRotated(Mercury.Revolution, 0, 1, 0);
-	//glTranslated(Mercury.xPos, Mercury.yPos, Mercury.zPos);
+	glTranslated(Mercury.xPos, Mercury.yPos, Mercury.zPos);
 	glRotated(Mercury.Rotation, 0, 1, 0);
 	//glColor3b(Mercury.RGB[0], Mercury.RGB[1], Mercury.RGB[2]);
-	C.x = Mercury.xPos, C.y = Mercury.yPos, C.z = Mercury.zPos;
+	//C.x = Mercury.xPos, C.y = Mercury.yPos, C.z = Mercury.zPos;
 	CreateSphere(C, Mercury.Radius, 128);
 	//glutSolidSphere(Mercury.Radius, 128, 128);
 	
@@ -319,10 +319,10 @@ GLvoid drawScene(GLvoid)
 	Venus.Orbit_Degree = 0;
 	glBindTexture(GL_TEXTURE_2D, textures[2]);
 	glRotated(Venus.Revolution, 0, 1, 0);
-	//glTranslated(Venus.xPos, Venus.yPos, Venus.zPos);
+	glTranslated(Venus.xPos, Venus.yPos, Venus.zPos);
 	glRotated(Venus.Rotation, 0, 1, 0);
 	//glColor3b(Venus.RGB[0], Venus.RGB[1], Venus.RGB[2]);
-	C.x = Venus.xPos, C.y = Venus.yPos, C.z = Venus.zPos;
+	//C.x = Venus.xPos, C.y = Venus.yPos, C.z = Venus.zPos;
 	CreateSphere(C, Venus.Radius, 128);
 	//glutSolidSphere(Venus.Radius, 128, 128);
 	//glColor3f(1, 1, 1);
@@ -342,10 +342,10 @@ GLvoid drawScene(GLvoid)
 	Earth.Orbit_Degree = 0;
 	glBindTexture(GL_TEXTURE_2D, textures[3]);
 	glRotated(Earth.Revolution, 0, 1, 0);
-	//glTranslated(Earth.xPos, Earth.yPos, Earth.zPos);
+	glTranslated(Earth.xPos, Earth.yPos, Earth.zPos);
 	glRotated(Earth.Rotation, 0, 1, 0);
 	//glColor3b(Earth.RGB[0], Earth.RGB[1], Earth.RGB[2]);
-	C.x = Earth.xPos, C.y = Earth.yPos, C.z = Earth.zPos;
+	//C.x = Earth.xPos, C.y = Earth.yPos, C.z = Earth.zPos;
 	CreateSphere(C, Earth.Radius, 128);
 	//glutSolidSphere(Earth.Radius, 128, 128);
 	//glColor3f(1, 1, 1);
@@ -365,10 +365,10 @@ GLvoid drawScene(GLvoid)
 	Mars.Orbit_Degree = 0;
 	glBindTexture(GL_TEXTURE_2D, textures[4]);
 	glRotated(Mars.Revolution, 0, 1, 0);
-	//glTranslated(Mars.xPos, Mars.yPos, Mars.zPos);
+	glTranslated(Mars.xPos, Mars.yPos, Mars.zPos);
 	glRotated(Mars.Rotation, 0, 1, 0);
 	//glColor3b(Mars.RGB[0], Mars.RGB[1], Mars.RGB[2]);
-	C.x = Mars.xPos, C.y = Mars.yPos, C.z = Mars.zPos;
+	//C.x = Mars.xPos, C.y = Mars.yPos, C.z = Mars.zPos;
 	CreateSphere(C, Mars.Radius, 128);
 	//glutSolidSphere(Mars.Radius, 128, 128);
 	//glColor3f(1, 1, 1);
@@ -388,10 +388,10 @@ GLvoid drawScene(GLvoid)
 	Jupiter.Orbit_Degree = 0;
 	glBindTexture(GL_TEXTURE_2D, textures[5]);
 	glRotated(Jupiter.Revolution, 0, 1, 0);
-	//glTranslated(Jupiter.xPos, Jupiter.yPos, Jupiter.zPos);
+	glTranslated(Jupiter.xPos, Jupiter.yPos, Jupiter.zPos);
 	glRotated(Jupiter.Rotation, 0, 1, 0);
 	//glColor3b(Jupiter.RGB[0], Jupiter.RGB[1], Jupiter.RGB[2]);
-	C.x = Jupiter.xPos, C.y = Jupiter.yPos, C.z = Jupiter.zPos;
+	//C.x = Jupiter.xPos, C.y = Jupiter.yPos, C.z = Jupiter.zPos;
 	CreateSphere(C, Jupiter.Radius, 128);
 	//glutSolidSphere(Jupiter.Radius, 128, 128);
 	//glColor3f(1, 1, 1);
@@ -411,10 +411,10 @@ GLvoid drawScene(GLvoid)
 	Saturn.Orbit_Degree = 0;
 	glBindTexture(GL_TEXTURE_2D, textures[6]);
 	glRotated(Saturn.Revolution, 0, 1, 0);
-	//glTranslated(Saturn.xPos, Saturn.yPos, Saturn.zPos);
+	glTranslated(Saturn.xPos, Saturn.yPos, Saturn.zPos);
 	glRotated(Saturn.Rotation, 0, 1, 0);
 	//glColor3b(Saturn.RGB[0], Saturn.RGB[1], Saturn.RGB[2]);
-	C.x = Saturn.xPos, C.y = Saturn.yPos, C.z = Saturn.zPos;
+	//C.x = Saturn.xPos, C.y = Saturn.yPos, C.z = Saturn.zPos;
 	CreateSphere(C, Saturn.Radius, 128);
 	//glutSolidSphere(Saturn.Radius, 128, 128);
 	//glColor3f(1, 1, 1);
@@ -434,10 +434,10 @@ GLvoid drawScene(GLvoid)
 	Uranus.Orbit_Degree = 0;
 	glBindTexture(GL_TEXTURE_2D, textures[7]);
 	glRotated(Uranus.Revolution, 0, 1, 0);
-	//glTranslated(Uranus.xPos, Uranus.yPos, Uranus.zPos);
+	glTranslated(Uranus.xPos, Uranus.yPos, Uranus.zPos);
 	glRotated(Uranus.Rotation, 0, 1, 0);
 	//glColor3b(Uranus.RGB[0], Uranus.RGB[1], Uranus.RGB[2]);
-	C.x = Uranus.xPos, C.y = Uranus.yPos, C.z = Uranus.zPos;
+	//C.x = Uranus.xPos, C.y = Uranus.yPos, C.z = Uranus.zPos;
 	CreateSphere(C, Uranus.Radius, 128);
 	//glutSolidSphere(Uranus.Radius, 128, 128);
 	//glColor3f(1, 1, 1);
@@ -457,10 +457,10 @@ GLvoid drawScene(GLvoid)
 	Neptune.Orbit_Degree = 0;
 	glBindTexture(GL_TEXTURE_2D, textures[8]);
 	glRotated(Neptune.Revolution, 0, 1, 0);
-	//glTranslated(Neptune.xPos, Neptune.yPos, Neptune.zPos);
+	glTranslated(Neptune.xPos, Neptune.yPos, Neptune.zPos);
 	glRotated(Neptune.Rotation, 0, 1, 0);
 	//glColor3b(Neptune.RGB[0], Neptune.RGB[1], Neptune.RGB[2]);
-	C.x = Neptune.xPos, C.y = Neptune.yPos, C.z = Neptune.zPos;
+	//C.x = Neptune.xPos, C.y = Neptune.yPos, C.z = Neptune.zPos;
 	CreateSphere(C, Neptune.Radius, 128);
 	//glutSolidSphere(Neptune.Radius, 128, 128);
 	//glColor3f(1, 1, 1);
@@ -648,12 +648,14 @@ void Keyboard(unsigned char key, int x, int y)
 		Camera.invalidate_values();
 		Camera.set_pos(0, 0, 0);
 		Camera.move_front(2000 - Sun.Radius * 2);
+		Camera.move_left(Sun.Radius);
 		break;
 	case '2'://荐己
 		Camera.Planet_Selection = 2;
 		Camera.invalidate_values();
 		Camera.set_pos(0, 0, 0);
-		Camera.move_front(2000 - Mercury.Radius * 2);
+		Camera.move_front(2000 - Mercury.Radius * 3);
+		Camera.move_left(Mercury.Radius);
 		break;
 	case '3'://陛己
 		Camera.Planet_Selection = 3;
@@ -665,37 +667,43 @@ void Keyboard(unsigned char key, int x, int y)
 		Camera.Planet_Selection = 4;
 		Camera.invalidate_values();
 		Camera.set_pos(0, 0, 0);
-		Camera.move_front(2000 - Earth.Radius * 2);
+		Camera.move_front(2000 - Earth.Radius * 3);
+		Camera.move_left(Earth.Radius);
 		break;
 	case '5'://拳己
 		Camera.Planet_Selection = 5;
 		Camera.invalidate_values();
 		Camera.set_pos(0, 0, 0);
-		Camera.move_front(2000 - Mars.Radius * 2);
+		Camera.move_front(2000 - Mars.Radius * 3);
+		Camera.move_left(Mars.Radius);
 		break;
 	case '6'://格己
 		Camera.Planet_Selection = 6;
 		Camera.invalidate_values();
 		Camera.set_pos(0, 0, 0);
-		Camera.move_front(2000 - Jupiter.Radius * 2);
+		Camera.move_front(2000 - Jupiter.Radius * 3);
+		Camera.move_left(Jupiter.Radius);
 		break;
 	case '7'://配己
 		Camera.Planet_Selection = 7;
 		Camera.invalidate_values();
 		Camera.set_pos(0, 0, 0);
-		Camera.move_front(2000 - Saturn.Radius * 2);
+		Camera.move_front(2000 - Saturn.Radius * 3);
+		Camera.move_left(Saturn.Radius);
 		break;
 	case '8'://玫空己
 		Camera.Planet_Selection = 8;
 		Camera.invalidate_values();
 		Camera.set_pos(0, 0, 0);
-		Camera.move_front(2000 - Uranus.Radius * 2);
+		Camera.move_front(2000 - Uranus.Radius * 3);
+		Camera.move_left(Uranus.Radius);
 		break;
 	case '9'://秦空己
 		Camera.Planet_Selection = 9;
 		Camera.invalidate_values();
 		Camera.set_pos(0, 0, 0);
-		Camera.move_front(2000 - Neptune.Radius * 2);
+		Camera.move_front(2000 - Neptune.Radius * 3);
+		Camera.move_left(Neptune.Radius);
 		break;
 	case '+':
 		Speed *= 10;
@@ -827,78 +835,95 @@ void Fix_Camera(void)
 		eyey = Sun.yPos + Sun.Radius;
 		eyez = Sun.zPos;
 		Camera.set_pos(eyex, eyey, eyez);
+		Camera.set_at(eyex + Sun.Radius, eyey - Sun.Radius, eyez);
 		break;
 	case 2://
 		ratio_c = cos(Mercury.Revolution * PI / 180);
 		ratio_s = sin(-Mercury.Revolution * PI / 180);
-		eyex = (Mercury.xPos - Mercury.Radius) * ratio_c ;
+		eyex = (Mercury.xPos) * ratio_c;
 		eyey = Mercury.yPos;
-		eyez = (Mercury.xPos - Mercury.Radius) * ratio_s ;
-		Camera.set_pos(eyex, eyey + Mercury.Radius / 3.0 , eyez - Mercury.Radius);
-		Camera.set_at(eyex, eyey, eyez);
+		eyez = (Mercury.xPos) * ratio_s;
+		ratio_c = cos((Mercury.Revolution - 45) * PI / 180);
+		ratio_s = sin(-(Mercury.Revolution - 45) * PI / 180);
+		Camera.set_pos(eyex, eyey + Mercury.Radius / 3.0, eyez);
+		Camera.set_at(eyex - Mercury.Radius* ratio_c, eyey, eyez - Mercury.Radius * ratio_s);
 		break;
 	case 3:
 		ratio_c = cos(Venus.Revolution * PI / 180);
 		ratio_s = sin(-Venus.Revolution * PI / 180);
-		eyex = (Venus.xPos - Venus.Radius)* ratio_c;
+		eyex = (Venus.xPos)* ratio_c;
 		eyey = Venus.yPos;
-		eyez = (Venus.xPos - Venus.Radius) * ratio_s;
-		Camera.set_pos(eyex, eyey + Venus.Radius / 3.0, eyez - Venus.Radius);
-		Camera.set_at(eyex, eyey, eyez);
+		eyez = (Venus.xPos) * ratio_s;
+		ratio_c = cos((Venus.Revolution - 45) * PI / 180);
+		ratio_s = sin(-(Venus.Revolution - 45) * PI / 180);
+		Camera.set_pos(eyex, eyey + Venus.Radius / 3.0, eyez);
+		Camera.set_at(eyex - Venus.Radius * ratio_c, eyey, eyez - Venus.Radius * ratio_s);
 		break;
 	case 4:
 		ratio_c = cos(Earth.Revolution * PI / 180);
 		ratio_s = sin(-Earth.Revolution * PI / 180);
-		eyex = (Earth.xPos - Earth.Radius)* ratio_c;
+		eyex = (Earth.xPos)* ratio_c;
 		eyey = Earth.yPos;
-		eyez = (Earth.xPos - Earth.Radius) * ratio_s;
-		Camera.set_pos(eyex, eyey + Earth.Radius / 3.0, eyez - Earth.Radius);
-		Camera.set_at(eyex, eyey, eyez);
+		eyez = (Earth.xPos) * ratio_s;
+		ratio_c = cos((Earth.Revolution - 45) * PI / 180);
+		ratio_s = sin(-(Earth.Revolution - 45) * PI / 180);
+		Camera.set_pos(eyex, eyey + Earth.Radius / 3.0, eyez);
+		Camera.set_at(eyex - Venus.Radius * ratio_c, eyey, eyez - Venus.Radius * ratio_s);
 		break;
 	case 5:
 		ratio_c = cos(Mars.Revolution * PI / 180);
 		ratio_s = sin(-Mars.Revolution * PI / 180);
-		eyex = (Mars.xPos - Mars.Radius)* ratio_c;
-		eyey = Mars.yPos + Mars.Radius;
-		eyez = (Mars.xPos - Mars.Radius) * ratio_s;
-		Camera.set_pos(eyex, eyey + Mars.Radius / 3.0, eyez - Mars.Radius);
-		Camera.set_at(eyex, eyey, eyez);
+		eyex = (Mars.xPos)* ratio_c;
+		eyey = Mars.yPos;
+		eyez = (Mars.xPos) * ratio_s;
+		ratio_c = cos((Mars.Revolution - 45) * PI / 180);
+		ratio_s = sin(-(Mars.Revolution - 45) * PI / 180);
+		Camera.set_pos(eyex, eyey + Mars.Radius / 3.0, eyez);
+		Camera.set_at(eyex - Mars.Radius * ratio_c, eyey, eyez - Mars.Radius * ratio_s);
 		break;
 	case 6:
 		ratio_c = cos(Jupiter.Revolution * PI / 180);
 		ratio_s = sin(-Jupiter.Revolution * PI / 180);
-		eyex = (Jupiter.xPos - Jupiter.Radius)* ratio_c;
-		eyey = Jupiter.yPos + Jupiter.Radius;
-		eyez = (Jupiter.xPos - Jupiter.Radius) * ratio_s;
-		Camera.set_pos(eyex, eyey + Jupiter.Radius / 3.0, eyez - Jupiter.Radius);
-		Camera.set_at(eyex, eyey, eyez);
+		eyex = (Jupiter.xPos)* ratio_c;
+		eyey = Jupiter.yPos;
+		eyez = (Jupiter.xPos) * ratio_s;
+		ratio_c = cos((Jupiter.Revolution - 45) * PI / 180);
+		ratio_s = sin(-(Jupiter.Revolution - 45) * PI / 180);
+		Camera.set_pos(eyex, eyey + Jupiter.Radius / 3.0, eyez);
+		Camera.set_at(eyex - Jupiter.Radius * ratio_c, eyey, eyez - Jupiter.Radius * ratio_s);
 		break;
 	case 7:
 		ratio_c = cos(Saturn.Revolution * PI / 180);
 		ratio_s = sin(-Saturn.Revolution * PI / 180);
-		eyex = (Saturn.xPos - Saturn.Radius)* ratio_c;
-		eyey = Saturn.yPos + Saturn.Radius;
-		eyez = (Saturn.xPos - Saturn.Radius) * ratio_s;
-		Camera.set_pos(eyex, eyey + Saturn.Radius / 3.0, eyez - Saturn.Radius);
-		Camera.set_at(eyex, eyey, eyez);
+		eyex = (Saturn.xPos)* ratio_c;
+		eyey = Saturn.yPos;
+		eyez = (Saturn.xPos) * ratio_s;
+		ratio_c = cos((Saturn.Revolution - 45) * PI / 180);
+		ratio_s = sin(-(Saturn.Revolution - 45) * PI / 180);
+		Camera.set_pos(eyex, eyey + Saturn.Radius / 3.0, eyez);
+		Camera.set_at(eyex - Saturn.Radius * ratio_c, eyey, eyez - Saturn.Radius * ratio_s);
 		break;
 	case 8:
 		ratio_c = cos(Uranus.Revolution * PI / 180);
 		ratio_s = sin(-Uranus.Revolution * PI / 180);
-		eyex = (Uranus.xPos - Uranus.Radius)* ratio_c;
-		eyey = Uranus.yPos + Uranus.Radius;
-		eyez = (Uranus.xPos - Uranus.Radius) * ratio_s;
-		Camera.set_pos(eyex, eyey + Uranus.Radius / 3.0, eyez - Uranus.Radius);
-		Camera.set_at(eyex, eyey, eyez);
+		eyex = (Uranus.xPos)* ratio_c;
+		eyey = Uranus.yPos;
+		eyez = (Uranus.xPos) * ratio_s;
+		ratio_c = cos((Uranus.Revolution - 45) * PI / 180);
+		ratio_s = sin(-(Uranus.Revolution - 45) * PI / 180);
+		Camera.set_pos(eyex, eyey + Uranus.Radius / 3.0, eyez);
+		Camera.set_at(eyex - Uranus.Radius * ratio_c, eyey, eyez - Uranus.Radius * ratio_s);
 		break;
 	case 9:
 		ratio_c = cos(Neptune.Revolution * PI / 180);
 		ratio_s = sin(-Neptune.Revolution * PI / 180);
-		eyex = (Neptune.xPos - Neptune.Radius)* ratio_c;
-		eyey = Neptune.yPos + Neptune.Radius;
-		eyez = (Neptune.xPos - Neptune.Radius) * ratio_s;
-		Camera.set_pos(eyex, eyey + Neptune.Radius / 3.0, eyez - Neptune.Radius);
-		Camera.set_at(eyex, eyey, eyez);
+		eyex = (Neptune.xPos)* ratio_c;
+		eyey = Neptune.yPos;
+		eyez = (Neptune.xPos) * ratio_s;
+		ratio_c = cos((Neptune.Revolution - 45) * PI / 180);
+		ratio_s = sin(-(Neptune.Revolution - 45) * PI / 180);
+		Camera.set_pos(eyex, eyey + Neptune.Radius / 3.0, eyez);
+		Camera.set_at(eyex - Neptune.Radius * ratio_c, eyey, eyez - Neptune.Radius * ratio_s);
 		break;
 	}
 }

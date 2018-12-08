@@ -9,6 +9,7 @@
 #include "Mercury.h"
 #include "Venus.h"
 #include "Earth.h"
+#include "Moon.h"
 #include "Mars.h"
 #include "Jupiter.h"
 #include "Saturn.h"
@@ -16,7 +17,7 @@
 #include "Neptune.h"
 #include "Camera.h"
 
-#define TEXTURE_NUMBER 9
+#define TEXTURE_NUMBER 12
 
 struct XYZ {
 	double x, y, z;
@@ -25,11 +26,6 @@ struct Orbit {
 	double x, z;
 	double degree = 0;
 };
-Orbit Coor[2], Circle[3], Moon[3];
-
-//카메라 조작 관련 변수
-int rt_x = 0, rt_y = 0, rt_z = 0, rt = 0, l_rt = 0, r_rt = 0, c_rt = 0;
-double cx = 0, cy = 0, cz = 0, big_radian = 200, small_radian = 70, circle_x, circle_z;
 
 //윈도우 관련 변수
 int ww = 1600, wh = 900;
@@ -187,6 +183,33 @@ void initTextures() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
+
+	glBindTexture(GL_TEXTURE_2D, textures[9]);
+	pBytes = LoadDIBitMap("BackGround.bmp", &info);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, 2048, 1024, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
+
+	glBindTexture(GL_TEXTURE_2D, textures[10]);
+	pBytes = LoadDIBitMap("SaturnRing.bmp", &info);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, 2048, 125, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
+
+	glBindTexture(GL_TEXTURE_2D, textures[11]);
+	pBytes = LoadDIBitMap("Moon.bmp", &info);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, 2048, 1024, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
 }
 void Mouse(int button, int state, int x, int y);
 void MouseWheel(int button, int dir, int x, int y);
@@ -194,8 +217,8 @@ void Keyboard(unsigned char key, int x, int y);
 void Motion(int x, int y);
 void Fix_Camera(void);
 void Show_Info(void);
+void drawTorus(double r, double c, int rSeg, int cSeg);
 void StarRotationTimerFunction(int value);
-void TimerFunction(int value);
 void mul(double m1, double m2, double m3);
 double get_dist(double sx, double sy, double sz, double dx, double dy, double dz);
 double abs(double x)
@@ -223,7 +246,6 @@ void main(int argc, char *argv[])
 	glutMouseFunc(Mouse);
 	glutMouseWheelFunc(MouseWheel);
 	glutMotionFunc(Motion);
-	glutTimerFunc(100, TimerFunction, 1);
 	glutTimerFunc(10, StarRotationTimerFunction, 1);
 	glutMainLoop();
 }
@@ -256,6 +278,8 @@ GLvoid drawScene(GLvoid)
 		Camera.UPx, Camera.UPy, Camera.UPz);
 
 	////////////////////////////////////////////
+	glBindTexture(GL_TEXTURE_2D, textures[9]);
+	CreateSphere(C, 5000, 10);
 	Show_Info();	
 	///////////////////////////////////////////
 
@@ -266,13 +290,7 @@ GLvoid drawScene(GLvoid)
 	glTranslated(Sun.xPos, Sun.yPos, Sun.zPos);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	glRotated(Sun.Rotation, 0, 1, 0);
-	//glColor3b(Sun.RGB[0], Sun.RGB[1], Sun.RGB[2]);
-	//C.x = Sun.xPos, C.y = Sun.yPos, C.z = Sun.zPos;
-	CreateSphere(C, Sun.Radius, 128);
-	//glutSolidSphere(Sun.Radius, 128, 128);
-	
-	//glColor3f(1, 1, 1);
-	//glutWireSphere(Sun.Radius+10, 15, 15);
+	CreateSphere(C, Sun.Radius, 50);
 	glPopMatrix();
 
 	//수성
@@ -290,13 +308,7 @@ GLvoid drawScene(GLvoid)
 	glRotated(Mercury.Revolution, 0, 1, 0);
 	glTranslated(Mercury.xPos, Mercury.yPos, Mercury.zPos);
 	glRotated(Mercury.Rotation, 0, 1, 0);
-	//glColor3b(Mercury.RGB[0], Mercury.RGB[1], Mercury.RGB[2]);
-	//C.x = Mercury.xPos, C.y = Mercury.yPos, C.z = Mercury.zPos;
-	CreateSphere(C, Mercury.Radius, 128);
-	//glutSolidSphere(Mercury.Radius, 128, 128);
-	
-	//glColor3f(1, 1, 1);
-	//glutWireSphere(Mercury.Radius + 10, 15, 15);
+	CreateSphere(C, Mercury.Radius, 50);
 	glPopMatrix();
 
 	//금성
@@ -314,12 +326,7 @@ GLvoid drawScene(GLvoid)
 	glRotated(Venus.Revolution, 0, 1, 0);
 	glTranslated(Venus.xPos, Venus.yPos, Venus.zPos);
 	glRotated(Venus.Rotation, 0, 1, 0);
-	//glColor3b(Venus.RGB[0], Venus.RGB[1], Venus.RGB[2]);
-	//C.x = Venus.xPos, C.y = Venus.yPos, C.z = Venus.zPos;
-	CreateSphere(C, Venus.Radius, 128);
-	//glutSolidSphere(Venus.Radius, 128, 128);
-	//glColor3f(1, 1, 1);
-	//glutWireSphere(Venus.Radius + 10, 15, 15);
+	CreateSphere(C, Venus.Radius, 50);
 	glPopMatrix();
 
 	//지구
@@ -337,12 +344,18 @@ GLvoid drawScene(GLvoid)
 	glRotated(Earth.Revolution, 0, 1, 0);
 	glTranslated(Earth.xPos, Earth.yPos, Earth.zPos);
 	glRotated(Earth.Rotation, 0, 1, 0);
-	//glColor3b(Earth.RGB[0], Earth.RGB[1], Earth.RGB[2]);
-	//C.x = Earth.xPos, C.y = Earth.yPos, C.z = Earth.zPos;
-	CreateSphere(C, Earth.Radius, 128);
-	//glutSolidSphere(Earth.Radius, 128, 128);
-	//glColor3f(1, 1, 1);
-	//glutWireSphere(Earth.Radius + 10, 15, 15);
+	CreateSphere(C, Earth.Radius, 50);
+	glPopMatrix();
+
+	//달
+	glPushMatrix();
+	glBindTexture(GL_TEXTURE_2D, textures[11]);
+	glRotated(Earth.Revolution, 0, 1, 0);
+	glTranslated(Earth.xPos, Earth.yPos, Earth.zPos);
+	glRotated(Moon.Revolution, 0, 1, 0);
+	glTranslated(Moon.Radius*8, 0, 0);
+	glRotated(Moon.Rotation, 0, 1, 0);
+	CreateSphere(C, Moon.Radius, 50);
 	glPopMatrix();
 
 	//화성
@@ -360,12 +373,7 @@ GLvoid drawScene(GLvoid)
 	glRotated(Mars.Revolution, 0, 1, 0);
 	glTranslated(Mars.xPos, Mars.yPos, Mars.zPos);
 	glRotated(Mars.Rotation, 0, 1, 0);
-	//glColor3b(Mars.RGB[0], Mars.RGB[1], Mars.RGB[2]);
-	//C.x = Mars.xPos, C.y = Mars.yPos, C.z = Mars.zPos;
-	CreateSphere(C, Mars.Radius, 128);
-	//glutSolidSphere(Mars.Radius, 128, 128);
-	//glColor3f(1, 1, 1);
-	//glutWireSphere(Mars.Radius + 10, 15, 15);
+	CreateSphere(C, Mars.Radius, 50);
 	glPopMatrix();
 
 	//목성
@@ -383,12 +391,7 @@ GLvoid drawScene(GLvoid)
 	glRotated(Jupiter.Revolution, 0, 1, 0);
 	glTranslated(Jupiter.xPos, Jupiter.yPos, Jupiter.zPos);
 	glRotated(Jupiter.Rotation, 0, 1, 0);
-	//glColor3b(Jupiter.RGB[0], Jupiter.RGB[1], Jupiter.RGB[2]);
-	//C.x = Jupiter.xPos, C.y = Jupiter.yPos, C.z = Jupiter.zPos;
-	CreateSphere(C, Jupiter.Radius, 128);
-	//glutSolidSphere(Jupiter.Radius, 128, 128);
-	//glColor3f(1, 1, 1);
-	//glutWireSphere(Jupiter.Radius + 10, 15, 15);
+	CreateSphere(C, Jupiter.Radius, 50);
 	glPopMatrix();
 
 	//토성
@@ -406,12 +409,12 @@ GLvoid drawScene(GLvoid)
 	glRotated(Saturn.Revolution, 0, 1, 0);
 	glTranslated(Saturn.xPos, Saturn.yPos, Saturn.zPos);
 	glRotated(Saturn.Rotation, 0, 1, 0);
-	//glColor3b(Saturn.RGB[0], Saturn.RGB[1], Saturn.RGB[2]);
-	//C.x = Saturn.xPos, C.y = Saturn.yPos, C.z = Saturn.zPos;
-	CreateSphere(C, Saturn.Radius, 128);
-	//glutSolidSphere(Saturn.Radius, 128, 128);
-	//glColor3f(1, 1, 1);
-	//glutWireSphere(Saturn.Radius, 30, 30);
+	CreateSphere(C, Saturn.Radius, 50);
+	////////////////////////////////////////////////////////////////
+	glRotated(90, 1, 0, 0);
+	glScaled(1, 1, 0.01);
+	drawTorus(20, 80, 50, 50);
+	///////////////////////////////////////////////////////////////
 	glPopMatrix();
 
 	//천왕성
@@ -429,12 +432,7 @@ GLvoid drawScene(GLvoid)
 	glRotated(Uranus.Revolution, 0, 1, 0);
 	glTranslated(Uranus.xPos, Uranus.yPos, Uranus.zPos);
 	glRotated(Uranus.Rotation, 0, 1, 0);
-	//glColor3b(Uranus.RGB[0], Uranus.RGB[1], Uranus.RGB[2]);
-	//C.x = Uranus.xPos, C.y = Uranus.yPos, C.z = Uranus.zPos;
-	CreateSphere(C, Uranus.Radius, 128);
-	//glutSolidSphere(Uranus.Radius, 128, 128);
-	//glColor3f(1, 1, 1);
-	//glutWireSphere(Uranus.Radius, 30, 30);
+	CreateSphere(C, Uranus.Radius, 50);
 	glPopMatrix();
 
 	//해왕성
@@ -453,12 +451,7 @@ GLvoid drawScene(GLvoid)
 	glRotated(Neptune.Revolution, 0, 1, 0);
 	glTranslated(Neptune.xPos, Neptune.yPos, Neptune.zPos);
 	glRotated(Neptune.Rotation, 0, 1, 0);
-	//glColor3b(Neptune.RGB[0], Neptune.RGB[1], Neptune.RGB[2]);
-	//C.x = Neptune.xPos, C.y = Neptune.yPos, C.z = Neptune.zPos;
-	CreateSphere(C, Neptune.Radius, 128);
-	//glutSolidSphere(Neptune.Radius, 128, 128);
-	//glColor3f(1, 1, 1);
-	//glutWireSphere(Neptune.Radius, 30, 30);
+	CreateSphere(C, Neptune.Radius, 50);
 	glPopMatrix();
 
 	glutSwapBuffers();
@@ -538,75 +531,6 @@ void Keyboard(unsigned char key, int x, int y)
 {
 	char Camera_Type = Camera.view_type();
 	switch (key) {
-	case 'X':
-		if (!reverse)
-			reverse = true;
-		else
-			reverse = false;
-		if (!rotate) {
-			rotate = true;
-			rt_x = 1, rt_y = 0, rt_z = 0;
-			rt = 0;
-		}
-		else
-			rotate = false;
-		break;
-	case 'x':
-		reverse = false;
-		if (!rotate) {
-			rotate = true;
-			rt_x = 1, rt_y = 0, rt_z = 0;
-			rt = 0;
-		}
-		else
-			rotate = false;
-		break;
-	case 'Y':
-		if (!reverse)
-			reverse = true;
-		else
-			reverse = false;
-		if (!rotate) {
-			rotate = true;
-			rt_x = 0, rt_y = 1, rt_z = 0;
-			rt = 0;
-		}
-		else
-			rotate = false;
-		break;
-	case 'y':
-		reverse = false;
-		if (!rotate) {
-			rotate = true;
-			rt_x = 0, rt_y = 1, rt_z = 0;
-			rt = 0;
-		}
-		else
-			rotate = false;
-		break;
-	case 'Z':
-		if (!reverse)
-			reverse = true;
-		else
-			reverse = false;
-		if (!rotate) {
-			rotate = true;
-			rt_x = 0, rt_y = 0, rt_z = 1;
-			rt = 0;
-		}
-		else
-			rotate = false;
-		break;
-	case 'z':
-		reverse = false;
-		if (!rotate) {
-			rotate = true;
-			rt_x = 0, rt_y = 0, rt_z = 1;
-			rt = 0;
-		}
-		else
-			rotate = false;
-		break;
 	case 'w':
 		if (Camera_Type == 'N') return;
 		Camera.move_up(CAMERA_MOVE);
@@ -713,83 +637,11 @@ void Keyboard(unsigned char key, int x, int y)
 		if (Camera_Type == 'N') return;
 		Camera.rotatez(-CAMERA_MOVE / 2.0);
 		break;
-	case 'm':
-		if (!model)
-			model = true;
-		else
-			model = false;
-		break;
-	case 'p':
-		if (!projection)
-			projection = true;
-		else
-			projection = false;
-		Reshape(WINDOW_WIDTH, WINDOW_HEIGHT);
-		break;
 	case 'Q': //종료
 		glutDestroyWindow(glutCreateWindow("TheSolarSystem"));
 		exit(0);
 	}
 	glutPostRedisplay();
-}
-void TimerFunction(int value) {
-	if(Camera.view_type() == 'N')
-
-	if (rotate) {
-		if (!reverse) {
-			if (rt < 360)
-				rt++;
-			else
-				rt = 0;
-		}
-		else {
-			if (rt > -360)
-				rt--;
-			else
-				rt = 0;
-		}
-	}
-	if (c_rotate) {
-		if (!reverse) {
-			if (c_rt < 360)
-				c_rt++;
-			else
-				c_rt = 0;
-		}
-		else {
-			if (c_rt > -360)
-				c_rt--;
-			else
-				c_rt = 0;
-		}
-	}
-
-	for (int i = 0; i < 3; i++) {
-		if (Circle[i].degree < 360) {
-			if (i == 0)
-				Circle[i].degree++;
-			else if (i == 1)
-				Circle[i].degree += 2;
-			else
-				Circle[i].degree += 3;
-			Circle[i].x = big_radian * cos(Circle[i].degree* PI);
-			Circle[i].z = big_radian * sin(Circle[i].degree* PI);
-		}
-		else
-			Circle[i].degree = 0;
-	}
-
-	for (int i = 0; i < 3; i++) {
-		if (Moon[i].degree < 360) {
-			Moon[i].degree++;
-			Moon[i].x = small_radian * cos(Circle[i].degree* PI);
-			Moon[i].z = small_radian * sin(Circle[i].degree* PI);
-		}
-		else
-			Moon[i].degree = 0;
-	}
-	glutPostRedisplay(); // 화면 재 출력
-	glutTimerFunc(10, TimerFunction, 1); // 타이머함수 재 설정
 }
 void MouseTranslated(void)
 {
@@ -950,6 +802,15 @@ void StarRotationTimerFunction(int value) {
 		Earth.Revolution += STAR_ROTATION_HOUR_PER_mSECOND / Earth.Revolution_Cycle * Speed;
 	else
 		Earth.Revolution = 0;
+	//달
+	if (Moon.Rotation < 360)
+		Moon.Rotation += STAR_ROTATION_HOUR_PER_mSECOND / Moon.Roation_Cycle * Speed;
+	else
+		Moon.Rotation = 0;
+	if (Moon.Revolution < 360)
+		Moon.Revolution += STAR_ROTATION_HOUR_PER_mSECOND / Moon.Revolution_Cycle * Speed;
+	else
+		Moon.Revolution = 0;
 	//화성
 	if (Mars.Rotation < 360)
 		Mars.Rotation += STAR_ROTATION_HOUR_PER_mSECOND / Mars.Roation_Cycle * Speed;
@@ -995,12 +856,6 @@ void StarRotationTimerFunction(int value) {
 		Neptune.Revolution += STAR_ROTATION_HOUR_PER_mSECOND / Neptune.Revolution_Cycle * Speed;
 	else
 		Neptune.Revolution = 0;
-	//
-	if (rt > -360)
-		rt--;
-	else
-		rt = 0;
-
 	glutPostRedisplay(); // 화면 재 출력
 	glutTimerFunc(10, StarRotationTimerFunction, 1); // 타이머함수 재 설정
 }
@@ -1241,5 +1096,43 @@ void CreateSphere(XYZ c, double r, int n) {
 		} 
 		glEnd(); 
 	}
+	glDisable(GL_TEXTURE_2D);
+}
+void drawTorus(double r = 0.07, double c = 0.15, int rSeg = 16, int cSeg = 8) {
+
+	/*
+	r = torus ring radius
+	c = torus tube radius
+	rSeg, cSeg = number of segments/detail
+	*/
+	glEnable(GL_TEXTURE_2D);
+	glFrontFace(GL_CW);
+	glBindTexture(GL_TEXTURE_2D, textures[10]);
+	//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	const double TAU = 2 * PI;
+
+	for (int i = 0; i < rSeg; i++) {
+		glBegin(GL_QUAD_STRIP);
+		for (int j = 0; j <= cSeg; j++) {
+			for (int k = 0; k <= 1; k++) {
+				double s = (i + k) % rSeg + 0.5;
+				double t = j % (cSeg + 1);
+
+				double x = (c + r * cos(s * TAU / rSeg)) * cos(t * TAU / cSeg);
+				double y = (c + r * cos(s * TAU / rSeg)) * sin(t * TAU / cSeg);
+				double z = r * sin(s * TAU / rSeg);
+
+				double u = (i + k) / (float)rSeg;
+				double v = t / (float)cSeg;
+
+				glTexCoord2d(u, v);
+				glNormal3f(2 * x, 2 * y, 2 * z);
+				glVertex3d(2 * x, 2 * y, 2 * z);
+			}
+		}
+		glEnd();
+	}
+	glFrontFace(GL_CCW);
 	glDisable(GL_TEXTURE_2D);
 }

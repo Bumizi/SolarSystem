@@ -11,7 +11,7 @@ struct Star_Mercury {
 	double Rotation = 0;
 	double Revolution_Cycle = STAR_REVOLUTION_DAY_PER_mSECOND * 88; //공전 주기 88일
 	double Revolution = 0;
-	const char info[11][60] = { { "Name : Mercury" },{ "Diameter : 4,879 km" },{ "Volume : 6.083 x 10^10 km^3 " },{ "Mass : 3.023 x 10^23 kg" },
-	{ "Rotation Period : 58 Day" },{ "Orbital Period : 88 Day" },{ "Surface Gravity : 0.37 G" },{ "Atmosphere : Oxygen(42%), Sodium(29%)" },
-	{ "Surface Temperature (max) : 427 'C" },{ "Surface Temperature (min) : -173 'C" },{ "Satellites : 0" } };
+	const char info[11][60] = { { "Name   :   Mercury" },{ "Diameter   :   4,879 km" },{ "Volume   :   6.083 x 10^10 km^3 " },{ "Mass   :   3.023 x 10^23 kg" },
+	{ "Rotation Period   :   58 Day" },{ "Orbital Period   :   88 Day" },{ "Surface Gravity   :   0.37 G" },{ "Atmosphere   :   Oxygen(42%), Sodium(29%)" },
+	{ "Surface Temperature (max)   :   427 'C" },{ "Surface Temperature (min)   :   -173 'C" },{ "Satellites   :   0" } };
 }Mercury;

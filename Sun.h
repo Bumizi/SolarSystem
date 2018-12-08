@@ -9,7 +9,7 @@ struct Star_Sun {
 	double Rotation = 0;
 
 	//const char* string = "string sample";
-	const char info[11][60] = { {"Name : The Sun"}, {"Diameter : 1,392,684 km"},{ "Volume : 1.41 x 10^18 km^3 " }, {"Mass : 1.98855 x 10^30 kg"},
-	{ "Luminous Intensity : 3.846 x 10^26 W" }, {"Rotation Period : 27 Day"}, { "Surface Gravity : 28 G" }, {"Atmosphere : Hydrogen(73%), Helium(24%)"},
-	{"Surface Temperature : 5,500 `C"}, {"Center Temperature : 15,000,000 `C"}};
+	const char info[11][60] = { {"Name   :   The Sun"}, {"Diameter   :   1,392,684 km"},{ "Volume   :   1.41 x 10^18 km^3 " }, {"Mass   :   1.98855 x 10^30 kg"},
+	{ "Luminous Intensity   :   3.846 x 10^26 W" }, {"Rotation Period   :   27 Day"}, { "Surface Gravity   :  28 G" }, {"Atmosphere   :   Hydrogen(73%), Helium(24%)"},
+	{"Surface Temperature   :   5,500 `C"}, {"Center Temperature   :   15,000,000 `C"}};
 }Sun;

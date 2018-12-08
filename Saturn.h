@@ -11,7 +11,7 @@ struct Star_Saturn {
 	double Rotation = 0;
 	double Revolution_Cycle = STAR_REVOLUTION_DAY_PER_mSECOND * 10759; //공전 주기 10759일
 	double Revolution = 0;
-	const char info[11][60] = { { "Name : Saturn" },{ "Diameter : 120,536 km" },{ "Volume : 8.27 x 10^14 km^3 " },{ "Mass : 5.6846 x 10^26 kg" },
-	{ "Rotation Period : 10 Hour" },{ "Orbital Period : 10,759 Day (29.4 Year)" },{ "Surface Gravity : 1.06 G" },{ "Atmosphere : Hydrogen(96%), Helium(3%)" },
-	{ "Surface Temperature (avg) : -139 'C" },{ "Satellites : 62" } };
+	const char info[11][60] = { { "Name   :   Saturn" },{ "Diameter   :   120,536 km" },{ "Volume   :   8.27 x 10^14 km^3 " },{ "Mass   :   5.6846 x 10^26 kg" },
+	{ "Rotation Period   :   10 Hour" },{ "Orbital Period   :   10,759 Day (29.4 Year)" },{ "Surface Gravity   :   1.06 G" },{ "Atmosphere   :   Hydrogen(96%), Helium(3%)" },
+	{ "Surface Temperature (avg)   :   -139 'C" },{ "Satellites   :   62" } };
 }Saturn;

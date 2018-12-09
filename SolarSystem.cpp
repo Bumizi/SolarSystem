@@ -27,6 +27,9 @@ struct Orbit {
 	double degree = 0;
 };
 
+//로켓 관련 변수
+double Spd = 5;
+
 //윈도우 관련 변수
 int ww = 1600, wh = 900;
 
@@ -223,12 +226,14 @@ void initTextures() {
 void Mouse(int button, int state, int x, int y);
 void MouseWheel(int button, int dir, int x, int y);
 void Keyboard(unsigned char key, int x, int y);
+void Timer(int value);
 void Motion(int x, int y);
 void Fix_Camera(void);
 void Show_Info(void);
 void drawTorus(double r, double c, int rSeg, int cSeg);
 void StarRotationTimerFunction(int value);
 void mul(double m1, double m2, double m3);
+double * mul_vertex(double x, double y, double z, double xx, double yy, double zz);
 double get_dist(double sx, double sy, double sz, double dx, double dy, double dz);
 double abs(double x)
 {
@@ -251,6 +256,7 @@ void main(int argc, char *argv[])
 	glutCreateWindow("TheSolarSystem"); // 윈도우 생성 (윈도우 이름)
 	initTextures();
 	glutDisplayFunc(drawScene); // 출력 함수의 지정
+	glutTimerFunc(TIMERDELAY, Timer, 1);
 	glutReshapeFunc(Reshape);
 	glutKeyboardFunc(Keyboard);
 	glutMouseFunc(Mouse);
@@ -268,30 +274,30 @@ GLvoid drawScene(GLvoid)
 
 
 	glMatrixMode(GL_PROJECTION);
-	MouseTranslated();
-	Reshape(ww, wh);
-	mul(Camera.rtx, Camera.rty, Camera.rtz);//카메라 회전 변환
-	//glRotated(Camera.rtx, 1, 0, 0);
-	//glRotated(Camera.rty, 0, 1, 0);
-	//glRotated(Camera.rtz, 0, 0, 1);
-	//카메라 이동 변환
-	glTranslated(Camera.mvx, Camera.mvy, Camera.mvz);
 
+	Reshape(ww, wh);
+	MouseTranslated();
+
+	//glPushMatrix();
+	//카메라 이동 변환
+	mul(Camera.rtx, Camera.rty, Camera.rtz);//카메라 회전 변환
+	glTranslated(Camera.mvx, Camera.mvy, Camera.mvz);
+	CreateSpaceShip();
+	
 	//Camera.invalidate_values();
 	//카메라 EYE, AY, UP 벡터로 시점 설정
-	glMatrixMode(GL_MODELVIEW);
-
-
 	Fix_Camera();//고정 뷰일 때, 함수 실행됨
+	glMatrixMode(GL_MODELVIEW);
 	gluLookAt(Camera.EYEx, Camera.EYEy, Camera.EYEz,
 		Camera.ATx, Camera.ATy, Camera.ATz,
 		Camera.UPx, Camera.UPy, Camera.UPz);
+	//glPopMatrix();
+
 
 	////////////////////////////////////////////
 	glBindTexture(GL_TEXTURE_2D, textures[9]);
 	CreateSphere(C, 5000, 10);
 	///////////////////////////////////////////
-	CreateSpaceShip();
 
 	glColor3f(1, 1, 1);
 	glEnable(GL_LIGHTING);
@@ -577,6 +583,19 @@ void Motion(int x, int y) {
 		mx = x; my = y;
 	}
 }
+void Timer(int value)
+{
+	if (Camera.Planet_Selection == 10)
+	{
+		double * mlv = mul_vertex(Camera.rtx, Camera.rty, Camera.rtz, 0, 0, Spd);
+
+		Camera.move_front(mlv[2]);
+		Camera.move_up(mlv[1]);
+		Camera.move_right(mlv[0]);
+	}
+	glutPostRedisplay();
+	glutTimerFunc(TIMERDELAY, Timer, 1);
+}
 void Keyboard(unsigned char key, int x, int y)
 {
 	char Camera_Type = Camera.view_type();
@@ -606,6 +625,16 @@ void Keyboard(unsigned char key, int x, int y)
 		Camera.Planet_Selection = 0;
 		Camera.invalidate_values();
 		Camera.set_pos(0, 0, 1600);
+		break;
+	case 'e':case 'E':
+		Camera.Planet_Selection = 0;
+		Camera.invalidate_values();
+		Camera.set_pos(0, 900, 1600);
+		break;
+	case '0':
+		Camera.Planet_Selection = 10;
+		Camera.invalidate_values();
+		Camera.set_pos(0, 900, 1600);
 		break;
 	case '1'://태양
 		Camera.Planet_Selection = 1;
@@ -671,10 +700,16 @@ void Keyboard(unsigned char key, int x, int y)
 		Camera.move_left(Neptune.Radius);
 		break;
 	case '+':
-		Speed *= 10;
+		if (Camera.Planet_Selection != 10)
+			Speed *= 10;
+		else
+			Spd *= 2;
 		break;
 	case '-':
-		Speed /= 10;
+		if (Camera.Planet_Selection != 10)
+			Speed /= 10;
+		else
+			Spd /= 2;
 		break;
 	case 'i':
 		if (Camera_Type == 'N') return;
@@ -682,9 +717,17 @@ void Keyboard(unsigned char key, int x, int y)
 		break;
 	case 'r':
 		if (Camera_Type == 'N') return;
-		Camera.rotatez(CAMERA_MOVE / 2.0);
+		Camera.rotatey(CAMERA_MOVE / 2.0);
 		break;
 	case 'R':
+		if (Camera_Type == 'N') return;
+		Camera.rotatey(-CAMERA_MOVE / 2.0);
+		break;
+	case '(':
+		if (Camera_Type == 'N') return;
+		Camera.rotatez(CAMERA_MOVE / 2.0);
+		break;
+	case ')':
 		if (Camera_Type == 'N') return;
 		Camera.rotatez(-CAMERA_MOVE / 2.0);
 		break;
@@ -972,6 +1015,69 @@ void mul(double x, double y, double z)
 	glMultMatrixd(total);
 	glTranslated(0, 0, -2000.0);
 }
+double * mul_vertex(double x, double y, double z, double xx, double yy, double zz)
+{
+	double rrx = x * PI / 180, rry = y * PI / 180, rrz = z * PI / 180;
+
+	GLdouble m1[16] = {
+		1, 0, 0, 0,
+		0, cos(rrx), sin(rrx), 0,
+		0, -sin(rrx), cos(rrx), 0,
+		0, 0, 0, 1
+	};
+	GLdouble m2[16] = {
+		cos(rry), 0, -sin(rry), 0,
+		0, 1, 0, 0,
+		sin(rry), 0, cos(rry), 0,
+		0, 0, 0, 1
+	};
+	GLdouble m3[16] = {
+		cos(rrz), sin(rrz), 0, 0,
+		-sin(rrz), cos(rrz), 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1
+	};
+	GLdouble tmp[16] = {
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0
+	};
+	GLdouble total[16] = {
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0
+	};
+
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			for (int k = 0; k < 4; k++)
+			{
+				tmp[i * 4 + j] += m1[i * 4 + k] * m2[k * 4 + j];
+			}
+		}
+	}
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			for (int k = 0; k < 4; k++)
+			{
+				total[i * 4 + j] += m3[i * 4 + k] * tmp[k * 4 + j];
+			}
+		}
+	}
+
+	GLdouble vtx[] = { 0, 0, 0, 1 };
+	for (int i = 0; i < 4; i++)
+	{
+		vtx[i] = xx * total[0 + 4*i] + yy * total[1 + 4 *i] + zz * total[2 + 4 * i];
+	}
+	return vtx;
+}
 double get_dist(double sx, double sy, double sz, double dx, double dy, double dz)
 {
 	return sqrt((sx - dx)*(sx - dx) + (sy - dy)*(sy - dy) + (sz - dz)*(sz - dz));
@@ -1165,10 +1271,17 @@ void CreateSphere(XYZ c, double r, int n) {
 	glDisable(GL_TEXTURE_2D);
 }
 void CreateSpaceShip(void) {
+	if (Camera.Planet_Selection != 10)return;
+
+	glPushMatrix();
+	glLoadIdentity();
+	glTranslated(0,0, Camera.EYEz + 387.5);
+	glRotated(-60, 1, 0, 0);
+
 	//머리
 	glPushMatrix();
 	glColor3f(0.4, 0.4, 0.4);
-	glTranslated(0, 1700, 3000);
+	//glTranslated(0, 1700, 3000);
 	glRotated(-90, 1, 0, 0);
 	glutSolidCone(1, 2, 10, 10);
 	glColor3f(1, 1, 1);
@@ -1178,7 +1291,6 @@ void CreateSpaceShip(void) {
 	//몸통
 	glPushMatrix();
 	glColor3f(0.9, 0.9, 0.9);
-	glTranslated(0, 1700, 3000);
 	glTranslated(0, -6, 0);
 	glRotated(-90, 1, 0, 0);
 
@@ -1199,7 +1311,6 @@ void CreateSpaceShip(void) {
 	//팔
 	glPushMatrix();
 	glColor3f(0.5, 0.5, 0.5);
-	glTranslated(0, 1700, 3000);
 	glTranslated(0, -2.8, -0.3);
 
 	glBegin(GL_TRIANGLES);
@@ -1232,8 +1343,7 @@ void CreateSpaceShip(void) {
 
 	//추진체
 	glPushMatrix();
-	glColor3f(0.8, 0.8, 0.8);
-	glTranslated(0, 1700, 3000);
+	glColor3f(0.2, 0.2, 0.2);
 	glTranslated(0, -2.8, -0.3);
 
 	glTranslated(-0.5, -3.6, 0);
@@ -1245,6 +1355,42 @@ void CreateSpaceShip(void) {
 	glutSolidCone(0.4, 1, 30, 30);
 	glutWireCone(0.4, 1, 30, 30);
 	glPopMatrix();
+
+	glPushMatrix();
+
+	glTranslated(-0.5, -3.6, 0);
+	glRotated(-90, 1, 0, 0);
+	glTranslated(0, 0.3, -3.1);
+	glPushMatrix();
+	//glScaled(1, 1, 2);
+	glDisable(GL_LIGHTING);
+	double rand_colors[20];
+	rand_colors[0] = rand() % 20;
+	for (int i = 0; i < 20; i++) {
+		if (i != 0)
+			rand_colors[i] = rand_colors[0] * (1 - i / 20.0);
+	}
+	for (int i = 0; i < 20; i++)
+	{
+		glTranslated(0, 0, -i * 0.05);
+		glColor3d(1, 1- rand_colors[i] /20.0, 0);
+		glutSolidSphere(0.4, 30, 30);
+	}
+
+	glPopMatrix();
+	glTranslated(1, 0, 0);
+	//glScaled(1, 1, 2);
+	for (int i = 0; i < 20; i++)
+	{
+		glTranslated(0, 0, -i * 0.05);
+		glColor3d(1, 1 - rand_colors[i] / 20.0, 0);
+		glutSolidSphere(0.4, 30, 30);
+	}
+	glEnable(GL_LIGHTING);
+	glPopMatrix();
+
+	glPopMatrix();
+	glColor3d(1, 1, 1);
 }
 void drawTorus(double r = 0.07, double c = 0.15, int rSeg = 16, int cSeg = 8) {
 

@@ -94,7 +94,7 @@ void Camera::set_pos(double x, double y, double z) {
 	case 'T':
 		ATx = 0, ATy = 0, ATz = -1;
 		break;
-	case 'F':
+	case 'F':case 'D':
 		ATx = 0, ATy = 1, ATz = 0;
 		break;
 	}

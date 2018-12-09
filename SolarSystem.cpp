@@ -278,20 +278,17 @@ GLvoid drawScene(GLvoid)
 	Reshape(ww, wh);
 	MouseTranslated();
 
-	//glPushMatrix();
 	//카메라 이동 변환
 	mul(Camera.rtx, Camera.rty, Camera.rtz);//카메라 회전 변환
 	glTranslated(Camera.mvx, Camera.mvy, Camera.mvz);
 	CreateSpaceShip();
 	
-	//Camera.invalidate_values();
 	//카메라 EYE, AY, UP 벡터로 시점 설정
 	Fix_Camera();//고정 뷰일 때, 함수 실행됨
 	glMatrixMode(GL_MODELVIEW);
 	gluLookAt(Camera.EYEx, Camera.EYEy, Camera.EYEz,
 		Camera.ATx, Camera.ATy, Camera.ATz,
 		Camera.UPx, Camera.UPy, Camera.UPz);
-	//glPopMatrix();
 
 
 	////////////////////////////////////////////
@@ -484,7 +481,6 @@ GLvoid drawScene(GLvoid)
 
 	//해왕성
 	glPushMatrix();
-	//Show_Info();
 	glDisable(GL_LIGHTING);
 	glBegin(GL_LINE_LOOP);
 	for (int i = 0; i < 360; i++) {
@@ -548,6 +544,7 @@ void Mouse(int button, int state, int x, int y) {
 	}
 	else if (button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN) {
 		if (Camera.view_type() == 'N') return;
+		if (Camera.Planet_Selection != 0)return;
 		wheel_drag = true;
 		ox = x; oy = y;
 		mx = x; my = y;
@@ -558,8 +555,9 @@ void Mouse(int button, int state, int x, int y) {
 	glutPostRedisplay();
 }
 void MouseWheel(int button, int dir, int x, int y) {
+	if (Camera.Planet_Selection != 0)return;
 	double dist = get_dist(400, 400, 0, x, y, 0);
-	static double tz;
+
 	int dx = 800 - x; int dy = y - 450;
 	if (dir > 0) {
 		Camera.move_front(CAMERA_MOVE * 3);
@@ -569,10 +567,7 @@ void MouseWheel(int button, int dir, int x, int y) {
 		}
 	}
 	else {
-		double mvd = (tz - CAMERA_MOVE * 3) < -10000 ? 0 : CAMERA_MOVE * 3;
-		Camera.move_back(mvd);
-		tz += Camera.mvz;
-		printf("%lf\n", tz);
+		Camera.move_back(CAMERA_MOVE * 3);
 	}
 }
 void Motion(int x, int y) {
@@ -602,19 +597,23 @@ void Keyboard(unsigned char key, int x, int y)
 	switch (key) {
 	case 'w':
 		if (Camera_Type == 'N') return;
-		Camera.move_up(CAMERA_MOVE);
+		if (Camera.Planet_Selection != 0)return;
+		Camera.move_up(-CAMERA_MOVE);
 		break;
 	case 'a':
 		if (Camera_Type == 'N') return;
-		Camera.move_left(CAMERA_MOVE);
+		if (Camera.Planet_Selection != 0)return;
+		Camera.move_left(-CAMERA_MOVE);
 		break;
 	case 's':
 		if (Camera_Type == 'N') return;
-		Camera.move_down(CAMERA_MOVE);
+		if (Camera.Planet_Selection != 0)return;
+		Camera.move_down(-CAMERA_MOVE);
 		break;
 	case 'd':
 		if (Camera_Type == 'N') return;
-		Camera.move_right(CAMERA_MOVE);
+		if (Camera.Planet_Selection != 0)return;
+		Camera.move_right(-CAMERA_MOVE);
 		break;
 	case 't':case 'T':
 		Camera.Planet_Selection = 0;
@@ -739,23 +738,17 @@ void Keyboard(unsigned char key, int x, int y)
 }
 void MouseTranslated(void)
 {
-	static double tx, ty;
 	if (ox == mx && oy == my)
 		return;
 	int dx = mx - ox; int dy = my - oy;
 
 	if (wheel_drag) {
-		//Camera.EYEx += dx;
-		//Camera.EYEy -= dy;
-		//Camera.ATx += dx;
-		//Camera.ATy -= dy;
-		Camera.move_right(dx);
-		Camera.move_down(dy);
+		Camera.move_right(-dx);
+		Camera.move_down(-dy);
 	}
 	else if (drag) {
 		Camera.rty -= dx / 10.0;
 		Camera.rtx -= dy / 10.0;
-		tx += Camera.rtx, ty += Camera.rty;
 	}
 
 	ox = mx, oy = my;
@@ -1281,7 +1274,6 @@ void CreateSpaceShip(void) {
 	//머리
 	glPushMatrix();
 	glColor3f(0.4, 0.4, 0.4);
-	//glTranslated(0, 1700, 3000);
 	glRotated(-90, 1, 0, 0);
 	glutSolidCone(1, 2, 10, 10);
 	glColor3f(1, 1, 1);
@@ -1362,7 +1354,6 @@ void CreateSpaceShip(void) {
 	glRotated(-90, 1, 0, 0);
 	glTranslated(0, 0.3, -3.1);
 	glPushMatrix();
-	//glScaled(1, 1, 2);
 	glDisable(GL_LIGHTING);
 	double rand_colors[20];
 	rand_colors[0] = rand() % 20;
@@ -1379,7 +1370,6 @@ void CreateSpaceShip(void) {
 
 	glPopMatrix();
 	glTranslated(1, 0, 0);
-	//glScaled(1, 1, 2);
 	for (int i = 0; i < 20; i++)
 	{
 		glTranslated(0, 0, -i * 0.05);

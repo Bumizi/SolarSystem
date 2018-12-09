@@ -722,14 +722,6 @@ void Keyboard(unsigned char key, int x, int y)
 		if (Camera_Type == 'N') return;
 		Camera.rotatey(-CAMERA_MOVE / 2.0);
 		break;
-	case '(':
-		if (Camera_Type == 'N') return;
-		Camera.rotatez(CAMERA_MOVE / 2.0);
-		break;
-	case ')':
-		if (Camera_Type == 'N') return;
-		Camera.rotatez(-CAMERA_MOVE / 2.0);
-		break;
 	case 'Q': //Á¾·á
 		glutDestroyWindow(glutCreateWindow("TheSolarSystem"));
 		exit(0);

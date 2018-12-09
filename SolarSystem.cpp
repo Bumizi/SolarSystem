@@ -120,7 +120,7 @@ void initTextures() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
-	
+
 	glBindTexture(GL_TEXTURE_2D, textures[1]);
 	pBytes = LoadDIBitMap("Mercury.bmp", &info);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, 2048, 1024, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
@@ -138,7 +138,7 @@ void initTextures() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GL_MODULATE);
-	
+
 	glBindTexture(GL_TEXTURE_2D, textures[3]);
 	pBytes = LoadDIBitMap("Earth.bmp", &info);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, 2048, 1024, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
@@ -236,6 +236,7 @@ double abs(double x)
 }
 
 void CreateSphere(XYZ c, double r, int n);
+void CreateSpaceShip(void);
 
 //마우스 움직임에 대한 translate 처리 함수
 void MouseTranslated(void);
@@ -275,7 +276,7 @@ GLvoid drawScene(GLvoid)
 	//glRotated(Camera.rtz, 0, 0, 1);
 	//카메라 이동 변환
 	glTranslated(Camera.mvx, Camera.mvy, Camera.mvz);
-	
+
 	//Camera.invalidate_values();
 	//카메라 EYE, AY, UP 벡터로 시점 설정
 	glMatrixMode(GL_MODELVIEW);
@@ -288,8 +289,9 @@ GLvoid drawScene(GLvoid)
 
 	////////////////////////////////////////////
 	glBindTexture(GL_TEXTURE_2D, textures[9]);
-	CreateSphere(C, 5000, 10);	
+	CreateSphere(C, 5000, 10);
 	///////////////////////////////////////////
+	CreateSpaceShip();
 
 	glColor3f(1, 1, 1);
 	glEnable(GL_LIGHTING);
@@ -384,7 +386,7 @@ GLvoid drawScene(GLvoid)
 	glRotated(Earth.Revolution, 0, 1, 0);
 	glTranslated(Earth.xPos, Earth.yPos, Earth.zPos);
 	glRotated(Moon.Revolution, 0, 1, 0);
-	glTranslated(Moon.Radius*8, 0, 0);
+	glTranslated(Moon.Radius * 8, 0, 0);
 	glRotated(Moon.Rotation, 0, 1, 0);
 	CreateSphere(C, Moon.Radius, 50);
 	glPopMatrix();
@@ -556,8 +558,8 @@ void MouseWheel(int button, int dir, int x, int y) {
 	if (dir > 0) {
 		Camera.move_front(CAMERA_MOVE * 3);
 		if (dist != 0 && Camera.view_type() != 'N') {
-			if(dx != 0)Camera.move_right(dx * CAMERA_MOVE * 3 / dist);
-			if(dy != 0)Camera.move_up(dy * CAMERA_MOVE * 3 / dist);
+			if (dx != 0)Camera.move_right(dx * CAMERA_MOVE * 3 / dist);
+			if (dy != 0)Camera.move_up(dy * CAMERA_MOVE * 3 / dist);
 		}
 	}
 	else {
@@ -828,7 +830,7 @@ void StarRotationTimerFunction(int value) {
 		Sun.Rotation = 0;
 	//수성
 	if (Mercury.Rotation < 360)
-		Mercury.Rotation += STAR_ROTATION_HOUR_PER_mSECOND/ Mercury.Roation_Cycle * Speed;
+		Mercury.Rotation += STAR_ROTATION_HOUR_PER_mSECOND / Mercury.Roation_Cycle * Speed;
 	else
 		Mercury.Rotation = 0;
 	if (Mercury.Revolution < 360)
@@ -999,7 +1001,7 @@ void Show_Info(void) {
 			glTranslated(Mercury.xPos, Mercury.yPos, Mercury.zPos);
 			glRotated(-150, 0, 1, 0);
 			for (int i = 0; i < 11; i++) {
-				glRasterPos3f(Mercury.Radius*1.5, Mercury.yPos + Mercury.Radius - i * Mercury.Radius/5, Mercury.zPos);
+				glRasterPos3f(Mercury.Radius*1.5, Mercury.yPos + Mercury.Radius - i * Mercury.Radius / 5, Mercury.zPos);
 				int len = (int)strlen(Mercury.info[i]);
 				for (int j = 0; j < len; j++) {
 					glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, (int)Mercury.info[i][j]);
@@ -1013,7 +1015,7 @@ void Show_Info(void) {
 			glTranslated(Venus.xPos, Venus.yPos, Venus.zPos);
 			glRotated(-150, 0, 1, 0);
 			for (int i = 0; i < 11; i++) {
-				glRasterPos3f(Venus.Radius*1.5, Venus.yPos + Venus.Radius - i * Venus.Radius/5, Venus.zPos);
+				glRasterPos3f(Venus.Radius*1.5, Venus.yPos + Venus.Radius - i * Venus.Radius / 5, Venus.zPos);
 				int len = (int)strlen(Venus.info[i]);
 				for (int j = 0; j < len; j++) {
 					glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, (int)Venus.info[i][j]);
@@ -1112,55 +1114,137 @@ void Show_Info(void) {
 }
 
 void CreateSphere(XYZ c, double r, int n) {
-	/* Create a sphere centered at c, with radius r, and precision n 
-	Draw a point for zero radius spheres */ 
+	/* Create a sphere centered at c, with radius r, and precision n
+	Draw a point for zero radius spheres */
 	int i, j; double theta1, theta2, theta3;
 	XYZ e, p;
 
 	glEnable(GL_TEXTURE_2D);
 
 	if (r < 0)
-		r = -r; 
-	if (n < 0) 
-		n = -n; 
+		r = -r;
+	if (n < 0)
+		n = -n;
 	if (n < 4 || r <= 0) {
 		glBegin(GL_POINTS);
 		glVertex3f(c.x, c.y, c.z);
 		glEnd();
 		return;
-	} 
-	for (j = 0; j<n / 2; j++) {
-		theta1 = j * TWOPI / n - PID2; 
-		theta2 = (j + 1) * TWOPI / n - PID2; 
-		glBegin(GL_QUAD_STRIP); 
-		for (i = 0; i <= n; i++) { 
+	}
+	for (j = 0; j < n / 2; j++) {
+		theta1 = j * TWOPI / n - PID2;
+		theta2 = (j + 1) * TWOPI / n - PID2;
+		glBegin(GL_QUAD_STRIP);
+		for (i = 0; i <= n; i++) {
 			theta3 = i * TWOPI / n;
 
-			e.x = cos(theta2) * cos(theta3); 
-			e.y = sin(theta2); 
-			e.z = cos(theta2) * sin(theta3); 
-			p.x = c.x + r * e.x; 
-			p.y = c.y + r * e.y; 
-			p.z = c.z + r * e.z; 
+			e.x = cos(theta2) * cos(theta3);
+			e.y = sin(theta2);
+			e.z = cos(theta2) * sin(theta3);
+			p.x = c.x + r * e.x;
+			p.y = c.y + r * e.y;
+			p.z = c.z + r * e.z;
 
-			glNormal3f(e.x, e.y, e.z); 
-			glTexCoord2f(i / (double)n, 2 * (j + 1) / (double)n); 
-			glVertex3f(p.x, p.y, p.z); 
+			glNormal3f(e.x, e.y, e.z);
+			glTexCoord2f(i / (double)n, 2 * (j + 1) / (double)n);
+			glVertex3f(p.x, p.y, p.z);
 
-			e.x = cos(theta1) * cos(theta3); 
-			e.y = sin(theta1); 
-			e.z = cos(theta1) * sin(theta3); 
-			p.x = c.x + r * e.x; 
-			p.y = c.y + r * e.y; 
-			p.z = c.z + r * e.z; 
+			e.x = cos(theta1) * cos(theta3);
+			e.y = sin(theta1);
+			e.z = cos(theta1) * sin(theta3);
+			p.x = c.x + r * e.x;
+			p.y = c.y + r * e.y;
+			p.z = c.z + r * e.z;
 
-			glNormal3f(e.x, e.y, e.z); 
-			glTexCoord2f(i / (double)n, 2 * j / (double)n); 
-			glVertex3f(p.x, p.y, p.z); 
-		} 
-		glEnd(); 
+			glNormal3f(e.x, e.y, e.z);
+			glTexCoord2f(i / (double)n, 2 * j / (double)n);
+			glVertex3f(p.x, p.y, p.z);
+		}
+		glEnd();
 	}
 	glDisable(GL_TEXTURE_2D);
+}
+void CreateSpaceShip(void) {
+	//머리
+	glPushMatrix();
+	glColor3f(0.4, 0.4, 0.4);
+	glTranslated(0, 1700, 3000);
+	glRotated(-90, 1, 0, 0);
+	glutSolidCone(1, 2, 10, 10);
+	glColor3f(1, 1, 1);
+	glutWireCone(1, 2, 10, 10);
+	glPopMatrix();
+
+	//몸통
+	glPushMatrix();
+	glColor3f(0.9, 0.9, 0.9);
+	glTranslated(0, 1700, 3000);
+	glTranslated(0, -6, 0);
+	glRotated(-90, 1, 0, 0);
+
+	glPushMatrix();
+	glTranslated(0, 0.5, 3);
+	glScaled(0.2, 0.1, 0.6);
+	glutSolidCube(10);
+	glColor3f(0.2, 0.2, 0.2);
+	glutWireCube(10);
+	glPopMatrix();
+
+	glColor3f(0.9, 0.9, 0.9);
+	glutSolidCylinder(1, 6, 10, 10);
+	glColor3f(0.2, 0.2, 0.2);
+	glutWireCylinder(1, 6, 10, 10);
+	glPopMatrix();
+
+	//팔
+	glPushMatrix();
+	glColor3f(0.5, 0.5, 0.5);
+	glTranslated(0, 1700, 3000);
+	glTranslated(0, -2.8, -0.3);
+
+	glBegin(GL_TRIANGLES);
+	glVertex3f(0, 3, 0);
+	glVertex3f(-3.5, -3, 0);
+	glVertex3f(3.5, -3, 0);
+
+	glVertex3f(0, -3, -0.5);
+	glVertex3f(-3.5, -3, -0.5);
+	glVertex3f(3.5, -3, -0.5);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glVertex3f(0, 3, 0);
+	glVertex3f(-3.5, -3, 0);
+	glVertex3f(-3.5, -3, -0.5);
+	glVertex3f(0, 3, -0.5);
+
+	glVertex3f(0, 3, 0);
+	glVertex3f(3.5, -3, 0);
+	glVertex3f(3.5, -3, -0.5);
+	glVertex3f(0, 3, -0.5);
+
+	glVertex3f(-3.5, -3, 0);
+	glVertex3f(-3.5, -3, -0.5);
+	glVertex3f(3.5, -3, -0.5);
+	glVertex3f(3.5, -3, 0);
+	glEnd();
+	glPopMatrix();
+
+	//추진체
+	glPushMatrix();
+	glColor3f(0.8, 0.8, 0.8);
+	glTranslated(0, 1700, 3000);
+	glTranslated(0, -2.8, -0.3);
+
+	glTranslated(-0.5, -3.6, 0);
+	glRotated(-90, 1, 0, 0);
+	glutSolidCone(0.4, 1, 30, 30);
+	glutWireCone(0.4, 1, 30, 30);
+
+	glTranslated(1, 0, 0);
+	glutSolidCone(0.4, 1, 30, 30);
+	glutWireCone(0.4, 1, 30, 30);
+	glPopMatrix();
 }
 void drawTorus(double r = 0.07, double c = 0.15, int rSeg = 16, int cSeg = 8) {
 
